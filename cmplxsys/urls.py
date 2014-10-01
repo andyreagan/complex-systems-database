@@ -1,5 +1,7 @@
 # urls.py
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView,RedirectView
+
 from tastypie.api import Api
 from cmplxsys.api import PersonResource, PaperResource, BasicFundingResource, BasicPressResource, BasicProjectResource
 
