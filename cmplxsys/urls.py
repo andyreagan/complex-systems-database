@@ -13,5 +13,8 @@ v1_api.register(BasicProjectResource())
 urlpatterns = patterns('',
     # The normal jazz here...
     # (r'^blog/', include('myapp.urls')),
+    url(r'^index.html',
+        TemplateView.as_view(template_name='cmplxsys/index.html'),
+        name='index'),
     (r'^api/', include(v1_api.urls)),
 )
