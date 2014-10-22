@@ -126,7 +126,7 @@ class Press(models.Model):
     url = models.CharField(max_length=2000, default="http://www.nytimes.com")
     author = models.CharField(max_length=200, null=True, blank=True,)
     date = models.DateTimeField('date published')
-    description = models.CharField(max_length=200, null=True, blank=True)
+    description = models.CharField(max_length=2000, null=True, blank=True)
     favorite = models.CharField(max_length=10, null=True, blank=True,)
     imagelink = models.CharField(max_length=200, null=True, blank=True)
     organization = models.CharField(max_length=200, null=True, blank=True)
