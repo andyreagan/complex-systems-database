@@ -11,7 +11,7 @@ class PaperPersonAdmin(admin.ModelAdmin):
     filter_horizontal = ('authors','fromclass')
 
 class PressPaperAdmin(admin.ModelAdmin):
-    filter_horizontal = ('papers',)
+    filter_horizontal = ('papers','project','people')
 
 class FundingProjectAdmin(admin.ModelAdmin):
     filter_horizontal = ('project',)
