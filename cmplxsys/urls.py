@@ -4,6 +4,7 @@ from django.views.generic import TemplateView,RedirectView
 
 from tastypie.api import Api
 from cmplxsys.api import PersonResource, PaperResource, BasicFundingResource, BasicPressResource, BasicProjectResource
+from cmplxsys import views
 
 v1_api = Api(api_name='v1')
 v1_api.register(PersonResource())
@@ -15,8 +16,10 @@ v1_api.register(BasicProjectResource())
 urlpatterns = patterns('',
     # The normal jazz here...
     # (r'^blog/', include('myapp.urls')),
-    url(r'^index.html',
+    url(r'^index/',
         TemplateView.as_view(template_name='cmplxsys/index.html'),
         name='index'),
+    url(r'^person/full/(?P<person>[\w]+)/$',views.personfull.as_view()),
     (r'^api/', include(v1_api.urls)),
 )
+

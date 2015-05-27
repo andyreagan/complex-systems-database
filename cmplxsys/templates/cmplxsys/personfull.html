@@ -1,0 +1,31 @@
+<!-- the full page build in jinja2 template in database app -->
+{% extends "cmplxsys/html5base.html" %}
+
+<!-- the stylesheet is over here:
+<link rel="stylesheet" href="http://cmplxsys.w3.uvm.edu/static/wordpress/css/personpagefull.css"> -->
+{% block headercss %}
+<link rel="stylesheet" href="/static/wordpress/css/paper.css">
+<link rel="stylesheet" href="/static/wordpress/css/personpagefullinside.css">
+{% endblock %}
+
+{% block content %}
+<!-- <ol class="nytlist"> -->
+<!--   {% for nyt in nyt_list %} -->
+<!--   <li><a href="/embed/nyt/all/{{ nyt.genre }}/" target="_blank">{{ nyt.genre }}</a>: {{nyt.happs|floatformat:2}}</li> -->
+<!--   {% endfor %} -->
+<!-- </ol> -->
+<div id="person" class="paper">
+<img src="http://cmplxsys.w3.uvm.edu/static/wordpress/images/humans/originals/{{ person.uname }}.jpg" class="personimage"/>
+<h1>{{ person.fullname }}</h1>
+<h2>{{ person.affiliation }}</h2>
+<h2>{{ person.position }}, {{person.department}}</h2>
+{% if paper_list|length > 0 %}
+<h3>Recent Papers: <a>(Show all)</a></h3>
+{% for paper in paper_list %}
+  <div class="paper">
+    <p>{{ paper.title }}</p>
+  </div>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

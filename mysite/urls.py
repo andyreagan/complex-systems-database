@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^', include('cmplxsys.urls',namespace='cmplxsys')),
     url(r'^admin/', include(admin.site.urls)),
-) 
+)
 
 # load the static files if in debug
 from settings import DEBUG

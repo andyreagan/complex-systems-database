@@ -47,6 +47,7 @@ SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = (
+    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,12 +80,30 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DJ_DB_ENGINE'),
-        'NAME': os.getenv('DJ_DB_NAME'),
-        'USER': os.getenv('DJ_DB_USER'),
-        'PASSWORD': os.getenv('DJ_DB_PASSWORD'),
-        'HOST': os.getenv('DJ_DB_HOST'),
-        'PORT': os.getenv('DJ_DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DJ_DB_ENGINE'),
+#         'NAME': os.getenv('DJ_DB_NAME'),
+#         'USER': os.getenv('DJ_DB_USER'),
+#         'PASSWORD': os.getenv('DJ_DB_PASSWORD'),
+#         'HOST': os.getenv('DJ_DB_HOST'),
+#         'PORT': os.getenv('DJ_DB_PORT'),
+#     }
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'CMPLXSYS_django',
+        'USER': 'cmplxsys_admin',
+	'PASSWORD': 'wkNsvp76IFEajWzX',
+        'HOST': 'webdb.uvm.edu',
+        'PORT': '3306',
     }
 }
 
