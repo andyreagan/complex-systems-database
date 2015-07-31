@@ -24,8 +24,15 @@ class personfull(View):
     def get(self, request, person):
         dbentry = Person.objects.filter(uname=person)
         if len(dbentry)>0:
-            paper_list = dbentry[0].paper_set.all()
-            return render(request, 'cmplxsys/personfull.html',{"person": dbentry[0], "paper_list": paper_list})
+            paper_list = dbentry[0].paper_set.all().order_by('-year')
+            press_list = dbentry[0].press_set.all()
+            project_list = dbentry[0].project_set.all()
+            # note that these are backward!
+            # (oops)
+            teaching_list = dbentry[0].courses_taken.all()
+            class_list = dbentry[0].courses_taught.all()
+            funding_list = dbentry[0].funding_set.all()
+            return render(request, 'cmplxsys/personfull.html',{"person": dbentry[0], "paper_list": paper_list, "press_list": press_list, "project_list": project_list, "teaching_list": teaching_list, "class_list": class_list, "funding_list": funding_list})
         else:
             return HttpResponse('<p><strong>{0}</strong> not found in our database</p>'.format(person))
 

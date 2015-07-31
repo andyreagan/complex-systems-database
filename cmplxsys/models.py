@@ -121,7 +121,7 @@ class Paper(models.Model):
     journal = models.CharField(max_length=200, null=True, blank=True)
     volume = models.CharField(max_length=200, null=True, blank=True)
     pages = models.CharField(max_length=200, null=True, blank=True)
-    year = models.CharField(max_length=200, null=True, blank=True)
+    year = models.IntegerField(default=1950)
     googlescholarlink = models.CharField(max_length=200, null=True, blank=True)
     preprintlink = models.CharField(max_length=200, null=True, blank=True)
     supplementarylink = models.CharField(max_length=200, null=True, blank=True)

@@ -101,7 +101,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'CMPLXSYS_django',
         'USER': 'cmplxsys_admin',
-	'PASSWORD': 'wkNsvp76IFEajWzX',
+	# 'PASSWORD': 'wkNsvp76IFEajWzX',
+        'PASSWORD': 'vgkKEN7JSfH1',
         'HOST': 'webdb.uvm.edu',
         'PORT': '3306',
     }
