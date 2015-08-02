@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# for django-cms
+gettext = lambda s: s
+PROJECT_PATH = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -34,10 +38,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "sekizai.context_processors.sekizai",
+    # 'cms.context_processors.cms_settings',
+    # "sekizai.context_processors.sekizai",
+)
+
+CMS_TEMPLATES = (
+    ('template_1.html', 'Template One'),
+    ('template_2.html', 'Template Two'),
 )
 
 ALLOWED_HOSTS = [
+    '.uvm.edu',
+    '.uvm.edu.',
     '.hedonometer.org',
     '.hedonometer.org.',
 ]
@@ -47,6 +59,11 @@ SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = (
+    # 'cms',  # django CMS itself
+    # 'mptt',  # utilities for implementing a modified pre-order traversal tree
+    # 'menus',  # helper for model independent hierarchical website navigation
+    # 'sekizai',  # for javascript and css management
+    # ' djangocms_admin_style',  # for the admin skin. You **must** add 'djangocms_admin_style' in the list before 'django.contrib.admin'.
     'suit',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,17 +76,29 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'south',
     'tastypie',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # an attempt to try to control CORS
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # this doesn't allow iframes from our site
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # for django cms
+    # 'django.middleware.locale.LocaleMiddleware',
+    # 'django.middleware.doc.XViewMiddleware',
+    # 'cms.middleware.page.CurrentPageMiddleware',
+    # 'cms.middleware.user.CurrentUserMiddleware',
+    # 'cms.middleware.toolbar.ToolbarMiddleware',
+    # 'cms.middleware.language.LanguageCookieMiddleware',
 )
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -78,12 +107,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -126,6 +155,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJ_STATIC_ROOT')
+
+MEDIA_URL = '/static/media/'
+MEDIA_ROOT = '/users/c/m/cmplxsys/www-root/static/media/'
 
 # from http://ianalexandr.com/blog/getting-started-with-django-logging-in-5-minutes.html
 # settings.py

@@ -10,8 +10,9 @@
 {% endblock %}
 
 {% block content %}
+
 <div id="person" class="paper">
-<img src="http://cmplxsys.w3.uvm.edu/static/wordpress/images/humans/originals/{{ person.uname }}.jpg" class="personimage"/>
+<img src="{{ person.image.url }}" class="personimage"/>
 <h1>{{ person.fullname }}</h1>
 <h2>{{ person.institution }}</h2>
 <h2>{{ person.affiliation0 }}, {{person.role0}}</h2>
@@ -24,12 +25,16 @@
     <div class="col-xs-4">
       <div class="padded-inner paper">
         <p>{{ paper.title }}</p>
+	<img src="{{ paper.image.url }}" class="paperimage"/>
+	<!-- <a href="http://www.uvm.edu/~cmplxsys/paper/?id={{ paper.id }}">Full details</a> -->
+	<a href="/db/paper/full/{{ paper.id }}">Full details</a>
       </div> <!-- paper -->
     </div> <!-- col -->
     {% else %}
     <div class="col-xs-4 hidden">
       <div class="padded-inner paper">
         <p>{{ paper.title }}</p>
+	<img src="{{ paper.image.url }}" class="paperimage"/>	
       </div> <!-- paper -->
     </div> <!-- col -->
     {% endif %}
@@ -46,6 +51,7 @@
   <div class="col-xs-4">
     <div class="padded-inner paper">
       <p>{{ press.title }}</p>
+	<img src="{{ press.image.url }}" class="pressimage"/>	      
     </div>
   </div> <!-- col -->
 {% endfor %}
@@ -93,7 +99,6 @@
 {% endfor %}
 </ul>
 {% endif %}
-
 
 
 </div>

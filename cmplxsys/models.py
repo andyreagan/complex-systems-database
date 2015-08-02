@@ -1,4 +1,8 @@
 from django.db import models
+from datetime import datetime
+
+def rename_files_person(instance,filename):
+    return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
 
 # Create your models here.
 # a model for the people
@@ -53,11 +57,18 @@ class Person(models.Model):
     plus = models.CharField(max_length=200, null=True, blank=True, default="")
     pinterest = models.CharField(max_length=200, null=True, blank=True, default="")
 
+    image = models.FileField(upload_to=rename_files_person,default="person/blank.png",
+                             help_text="Timestamp will automatically be added.")
+
     def __unicode__(self):
         return self.fullname
 
     class Meta:
         ordering = ('uname',)
+        # order_with_respect_to = 'order__order'
+
+def rename_files_project(instance,filename):
+    return datetime.now().strftime("projects/%Y-%m-%d-%H-%M-{0}".format(filename))        
 
 # projects
 # point to people
@@ -66,6 +77,9 @@ class Project(models.Model):
     title = models.CharField(max_length=500, default="Earth shattering project.")
     description = models.TextField(null=True, blank=True)
     people = models.ManyToManyField(Person)
+
+    image = models.FileField(upload_to=rename_files_project,default="project/blank.png",
+                             help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
         return self.title
@@ -107,13 +121,18 @@ class Course(models.Model):
     def __unicode__(self):
         return self.shortcode
 
+
+def rename_files_paper(instance,filename):
+    return datetime.now().strftime("papers/%Y-%m-%d-%H-%M-{0}".format(filename))            
+    
 # papers
 # point to authors, projects, funding (for direct funding), course
 # pointed to by press
 class Paper(models.Model):
     title = models.CharField(max_length=500)
     logline = models.CharField(max_length=500, null=True, blank=True,)
-    abstract = models.TextField(default="There are none.")
+    abstract = models.TextField(default="There are none.",help_text="LaTeX format")
+    HTMLabstract = models.TextField(default="There are none.<br>",help_text="HTML format")
     img = models.CharField(max_length=200, null=True, blank=True,)
     status = models.CharField(max_length=200)
     arxiv = models.CharField(max_length=200, null=True, blank=True)
@@ -132,12 +151,24 @@ class Paper(models.Model):
     bibref = models.CharField(max_length=200, null=True, blank=True)
     timescited = models.CharField(max_length=20, null=True, blank=True)
 
-    authors = models.ManyToManyField(Person)
+    authors = models.ManyToManyField(Person,through='Order')
+    # authors = models.ManyToManyField(Person)    
     fromclass = models.ManyToManyField(Course, blank=True)
+
+    image = models.FileField(upload_to=rename_files_paper,default="paper/blank.png",
+                             help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
         return self.title
 
+class Order(models.Model):
+    author = models.ForeignKey(Person)
+    paper = models.ForeignKey(Paper)
+    order = models.IntegerField(default=0)
+        
+def rename_files_press(instance,filename):
+    return datetime.now().strftime("press/%Y-%m-%d-%H-%M-{0}".format(filename))            
+    
 # press
 # points to papers, projects, people
 class Press(models.Model):
@@ -152,6 +183,8 @@ class Press(models.Model):
     papers = models.ManyToManyField(Paper, blank=True)
     projects = models.ManyToManyField(Project, blank=True)
     people = models.ManyToManyField(Person, blank=True)
+    image = models.FileField(upload_to=rename_files_press,default="press/blank.png",
+                             help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
         return self.title 

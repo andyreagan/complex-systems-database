@@ -8,7 +8,7 @@ from django.views.generic import View
 
 from mysite.settings import STATIC_ROOT
 
-from cmplxsys.models import Person
+from cmplxsys.models import Person,Paper
 
 # from django.views.decorators.csrf import csrf_exempt, csrf_protect
 # from django.core import serializers
@@ -37,3 +37,25 @@ class personfull(View):
             return HttpResponse('<p><strong>{0}</strong> not found in our database</p>'.format(person))
 
 
+class paperfull(View):
+     # return all of the annotations for a book
+    def get(self, request, paper):
+        dbentry = Paper.objects.filter(id=paper)
+        if len(dbentry) > 0:
+            
+            # paper_list = dbentry[0].paper_set.all().order_by('-year')
+            # press_list = dbentry[0].press_set.all()
+            # project_list = dbentry[0].project_set.all()
+            
+            # note that these are backward!
+            # (oops)
+            author_list = dbentry[0].authors.all()
+            press_list = dbentry[0].press_set.all()
+            
+            return render(request, 'cmplxsys/paperfull.html',
+                          {"paper": dbentry[0],
+                           "author_list": author_list,
+                           "press_list": press_list, }
+                         )
+        else:
+            return HttpResponse('<p>Paper ID=<strong>{0}</strong> not found in our database</p>'.format(paper))

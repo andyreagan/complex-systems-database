@@ -1,0 +1,51 @@
+<!-- the full page build in jinja2 template in database app -->
+{% extends "cmplxsys/html5base.html" %}
+
+<!-- the stylesheet is over here:
+<link rel="stylesheet" href="http://cmplxsys.w3.uvm.edu/static/wordpress/css/personpagefull.css"> -->
+{% block headercss %}
+<link rel="stylesheet" href="/static/wordpress/css/paper.css">
+<link rel="stylesheet" href="/static/wordpress/css/bootstrap.css">
+<link rel="stylesheet" href="/static/wordpress/css/paperpagefullinside.css">
+{% endblock %}
+
+{% block content %}
+<div id="" class="paper">
+  <img src="{{ paper.image.url }}" class="paperimage"/>
+  <h1>{{ paper.title }}</h1>
+  <h2>{{ paper.HTMLabstract }}</h2>
+
+  <h3>Authors:</h3>
+  <div class="row">  
+    {% for person in author_list %}
+    <div class="col-xs-4">
+      <img src="{{ person.image.url }}" class="personimage"/>      
+      <h1>{{ person.fullname }}</h1>
+      <h2>{{ person.institution }}</h2>
+      <h2>{{ person.affiliation0 }}, {{person.role0}}</h2>
+    </div>      
+    {% endfor %}
+  </div> <!-- col -->    
+{% if press_list|length > 0 %}
+<h3>Most recent press: </h3>
+<div class="row">
+{% for press in press_list %}
+  <div class="col-xs-4">
+    <div class="padded-inner paper">
+      <p>{{ press.title }}</p>
+	<img src="{{ press.image.url }}" class="pressimage"/>	      
+    </div>
+  </div> <!-- col -->
+{% endfor %}
+</div> <!-- row -->
+<a id="showallpress">(show all)</a>
+{% endif %}
+
+</div>
+{% endblock %}
+
+
+{% block bottomjs %}
+<script src="/static/wordpress/js/jquery-1.9.1.js">
+<script src="/static/wordpress/js/bootstrap.js">
+{% endblock %}
