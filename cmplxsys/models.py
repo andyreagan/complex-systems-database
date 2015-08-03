@@ -4,6 +4,9 @@ from datetime import datetime
 def rename_files_person(instance,filename):
     return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
 
+def rename_files_person_circles(instance,filename):
+    return datetime.now().strftime("people/circles/%Y-%m-%d-%H-%M-{0}".format(filename))
+
 # Create your models here.
 # a model for the people
 # pointed to by courses (twice), papers, projects, press, funding
@@ -13,9 +16,11 @@ class Person(models.Model):
     uname = models.CharField(max_length=20)
     # eventually can build a model for affiliations (VACC, UVM, CSYS, CS, MATH, etc)
     # but bigger fish to fry right now
-    institution = models.CharField(max_length=200, default="University of Vermont")
-    affiliation0 = models.CharField(max_length=200, default="Department of Mathematics and Statistics")
-    role0 = models.CharField(max_length=200, default="Professor",)
+    institution = models.CharField(max_length=200, default="University of Vermont",
+                                   help_text="Ex: UVM, MITRE, ...")
+    affiliation0 = models.CharField(max_length=200, default="Department of Mathematics and Statistics",
+                                    null=True, blank=True,)
+    role0 = models.CharField(max_length=200, default="Professor")
     affiliation1 = models.CharField(max_length=200, null=True, blank=True, default="",)
     role1 = models.CharField(max_length=200, null=True, blank=True, default="",)
     affiliation2 = models.CharField(max_length=200, null=True, blank=True, default="",)
@@ -42,22 +47,30 @@ class Person(models.Model):
     middle = models.CharField(max_length=200, null=True, blank=True, default="")
     last = models.CharField(max_length=200, null=True, blank=True, default="")
     sur = models.CharField(max_length=200, null=True, blank=True, default="")
-    webpage = models.CharField(max_length=200, null=True, blank=True, default="")
-    linkedin = models.CharField(max_length=200, null=True, blank=True, default="")
-    twitter = models.CharField(max_length=200, null=True, blank=True, default="")
-    strava = models.CharField(max_length=200, null=True, blank=True, default="")
+    webpage = models.CharField(max_length=200, null=True, blank=True, default="",
+                               help_text="Full URL.")
+    linkedin = models.CharField(max_length=200, null=True, blank=True, default="",
+                               help_text="https://www.linkedin.com/_________")
+    twitter = models.CharField(max_length=200, null=True, blank=True, default="",
+                               help_text="Just the username.")
+    strava = models.CharField(max_length=200, null=True, blank=True, default="",
+                               help_text="https://www.strava.com/athletes/_________")
     facebook = models.CharField(max_length=200, null=True, blank=True, default="")
     youtube = models.CharField(max_length=200, null=True, blank=True, default="")
     vine = models.CharField(max_length=200, null=True, blank=True, default="")
     instagram = models.CharField(max_length=200, null=True, blank=True, default="")
     scholar = models.CharField(max_length=200, null=True, blank=True, default="")
-    github = models.CharField(max_length=200, null=True, blank=True, default="")
+    github = models.CharField(max_length=200, null=True, blank=True, default="",
+                              help_text="Just the username.")
     bitbucket = models.CharField(max_length=200, null=True, blank=True, default="")
     stackoverflow = models.CharField(max_length=200, null=True, blank=True, default="")
     plus = models.CharField(max_length=200, null=True, blank=True, default="")
     pinterest = models.CharField(max_length=200, null=True, blank=True, default="")
-
-    image = models.FileField(upload_to=rename_files_person,default="person/blank.png",
+    arxiv = models.CharField(max_length=200, null=True, blank=True, default="",
+                             help_text="http://arxiv.org/__________")
+    image = models.FileField(upload_to=rename_files_person,default="people/blank.png",
+                             help_text="Timestamp will automatically be added.")
+    image_circle = models.FileField(upload_to=rename_files_person_circles,default="people/circles/blank.png",
                              help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
