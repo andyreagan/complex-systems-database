@@ -56,7 +56,8 @@ class Person(models.Model):
     strava = models.CharField(max_length=200, null=True, blank=True, default="",
                                help_text="https://www.strava.com/athletes/_________")
     facebook = models.CharField(max_length=200, null=True, blank=True, default="")
-    youtube = models.CharField(max_length=200, null=True, blank=True, default="")
+    youtube = models.CharField(max_length=200, null=True, blank=True, default="",
+                               help_text="https://www.youtube.com/channel/________")
     vine = models.CharField(max_length=200, null=True, blank=True, default="")
     instagram = models.CharField(max_length=200, null=True, blank=True, default="")
     scholar = models.CharField(max_length=200, null=True, blank=True, default="")
