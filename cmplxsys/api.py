@@ -4,22 +4,30 @@ from tastypie import fields
 
 class BasicPersonResource(ModelResource):
     class Meta:
+        # queryset = Person.objects.all().order_by('core_team_order')
         queryset = Person.objects.all()
         resource_name = 'personsimple'
         filtering = {
             'uname': ALL,
+            'core_team': ALL,
+            'associated_faculty': ALL,
         }
         ordering = {
             'uname': ALL,
-            # 'order': ALL,
+            'core_team_order': ALL,
         }
 
 class PersonResource(ModelResource):
     # the person resource always gets their papers
     papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource','paper_set',full=True)
+    # this works!! but only if the bundle is not empty
+    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource',lambda bundle: bundle.obj.paper_set.all().order_by('-year'),full=True)
+
     # press = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: Press.objects.all().order_by('-date'),full=True)
-    press = fields.ManyToManyField('cmplxsys.api.BasicPressResource','press_set',full=True)    
+    press = fields.ManyToManyField('cmplxsys.api.BasicPressResource','press_set',full=True)
+    # press = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: bundle.obj.press_set.all().order_by('-date'),full=True)
     # .order_by('-date')
+
     funding = fields.ManyToManyField('cmplxsys.api.BasicFundingResource','funding_set',full=True)
     projects = fields.ManyToManyField('cmplxsys.api.BasicProjectResource','project_set',full=True)
 
@@ -42,6 +50,9 @@ class BasicPaperResource(ModelResource):
             'title': ALL,
             'id': ALL,
             'author': ALL,
+        }
+        ordering = {
+            'year': ALL,
         }
 
 class PaperResource(ModelResource):

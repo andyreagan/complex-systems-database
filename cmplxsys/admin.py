@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from cmplxsys.models import Person,Paper,Press,Funding,Project,Course,Order
+from cmplxsys.models import Person,Paper,Press,Funding,Project,Course,Order,Position
 
 # class PersonAdmin(admin.ModelAdmin):
 #     list_display = ('website','strava') 
@@ -9,6 +9,10 @@ from cmplxsys.models import Person,Paper,Press,Funding,Project,Course,Order
 class OrderInline(admin.TabularInline):
     model = Order
     extra = 1
+
+class PositionInline(admin.TabularInline):
+    model = Position
+    extra = 0
 
 class PaperAdmin(admin.ModelAdmin):
     search_fields = ['title']
@@ -28,7 +32,7 @@ class CourseAdmin(admin.ModelAdmin):
     filter_horizontal = ('students','teachers')
 
 class PersonAdmin(admin.ModelAdmin):
-    inlines = (OrderInline,)    
+    inlines = (OrderInline,PositionInline,)    
     search_fields = ['fullname']
 
 admin.site.register(Person,PersonAdmin)

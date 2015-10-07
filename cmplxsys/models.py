@@ -1,11 +1,10 @@
 from django.db import models
 from datetime import datetime
+from subprocess import call
+
 
 def rename_files_person(instance,filename):
     return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
-
-def rename_files_person_circles(instance,filename):
-    return datetime.now().strftime("people/circles/%Y-%m-%d-%H-%M-{0}".format(filename))
 
 # Create your models here.
 # a model for the people
@@ -69,10 +68,18 @@ class Person(models.Model):
     pinterest = models.CharField(max_length=200, null=True, blank=True, default="")
     arxiv = models.CharField(max_length=200, null=True, blank=True, default="",
                              help_text="http://arxiv.org/__________")
+    researchgate = models.CharField(max_length=200, null=True, blank=True, default="",
+                             help_text="https://www.researchgate.net/profile/_________")
+    orcid = models.CharField(max_length=19, null=True, blank=True, default="",
+                             help_text="Please enter the full number (with the dashes): http://orcid.org/____-____-____-____")
     image = models.FileField(upload_to=rename_files_person,default="people/blank.png",
-                             help_text="Timestamp will automatically be added.")
-    image_circle = models.FileField(upload_to=rename_files_person_circles,default="people/circles/blank.png",
-                             help_text="Timestamp will automatically be added.")
+                             help_text="Timestamp will automatically be added and will automatically convert to grayscale.")
+    collaborator = models.BooleanField(default=False,help_text="If they don't work at/go to UVM.")
+    alumni = models.BooleanField(default=False,help_text="If they used to go here.")
+
+    core_team = models.BooleanField(default=False,help_text="Will show up on the core team page.")
+    core_team_order = models.IntegerField(default=0,help_text="Order to sort if core_team=True.")
+    associated_faculty = models.BooleanField(default=False,help_text="Will show up on the associated faculty page.")
 
     def __unicode__(self):
         return self.fullname
@@ -80,6 +87,25 @@ class Person(models.Model):
     class Meta:
         ordering = ('uname',)
         # order_with_respect_to = 'order__order'
+
+class Position(models.Model):
+    TITLE_CHOICES = (
+        ('PD', 'Post Doctoral Fellow'),
+        ('PHD', 'PhD Student'),
+        ('MS', 'Masters Student'),
+        ('UG', 'Undergraduate Student'),
+        ('CERT', 'Certificate of Study in Complex Systems'),
+        )
+
+    title = models.CharField(max_length=4,
+                             choices=TITLE_CHOICES,
+                             default='PHD')
+    startyear = models.CharField(max_length=10,default='2015')
+    endyear = models.CharField(max_length=10,default='Current')
+    person = models.ForeignKey(Person)
+
+    def __unicode__(self):
+        return self.title
 
 def rename_files_project(instance,filename):
     return datetime.now().strftime("projects/%Y-%m-%d-%H-%M-{0}".format(filename))        
@@ -154,14 +180,15 @@ class Paper(models.Model):
     journal = models.CharField(max_length=200, null=True, blank=True)
     volume = models.CharField(max_length=200, null=True, blank=True)
     pages = models.CharField(max_length=200, null=True, blank=True)
-    year = models.IntegerField(default=1950)
+    year = models.IntegerField(default=1950,help_text="Date to be used for formatting the citation.")
+    sort_date = models.DateTimeField(help_text="Date to be used for sorting the paper in lists on the site.")
     googlescholarlink = models.CharField(max_length=200, null=True, blank=True)
-    preprintlink = models.CharField(max_length=200, null=True, blank=True)
+    preprintlink = models.CharField(max_length=200, null=True, blank=True, help_text="Link to the preprint (arxiv or similar).")
     supplementarylink = models.CharField(max_length=200, null=True, blank=True)
     onlineappendices = models.CharField(max_length=200, null=True, blank=True)
     journalpagelink = models.CharField(max_length=200, null=True, blank=True)
     arxivlink = models.CharField(max_length=200, null=True, blank=True)
-    titlelink = models.CharField(max_length=200, null=True, blank=True)
+    titlelink = models.CharField(max_length=200, null=True, blank=True, help_text="Link that will download on click of the title.")
     bibref = models.CharField(max_length=200, null=True, blank=True)
     timescited = models.CharField(max_length=20, null=True, blank=True)
 
@@ -169,7 +196,7 @@ class Paper(models.Model):
     # authors = models.ManyToManyField(Person)    
     fromclass = models.ManyToManyField(Course, blank=True)
 
-    image = models.FileField(upload_to=rename_files_paper,default="paper/blank.png",
+    image = models.FileField(upload_to=rename_files_paper,default="papers/blank.png",
                              help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
