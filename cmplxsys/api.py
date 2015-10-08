@@ -1,8 +1,10 @@
-from cmplxsys.models import Person,Paper,Funding,Press,Project,Course
+from cmplxsys.models import Person,Paper,Funding,Press,Project,Course,Position
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 
 class BasicPersonResource(ModelResource):
+    # positions = fields.ToManyField('cmplxsys.models.position','position_set',full=True)
+    positions = fields.ToManyField('cmplxsys.api.BasicPositionResource','position_set',full=True)
     class Meta:
         # queryset = Person.objects.all().order_by('core_team_order')
         queryset = Person.objects.all()
@@ -11,11 +13,22 @@ class BasicPersonResource(ModelResource):
             'uname': ALL,
             'core_team': ALL,
             'associated_faculty': ALL,
+            'alumni': ALL,
+            'positions': ALL,
         }
         ordering = {
             'uname': ALL,
             'core_team_order': ALL,
+            'positions': ALL,
         }
+
+class BasicPositionResource(ModelResource):
+    class Meta:
+        queryset = Position.objects.all()
+        resource_name = 'position'
+        filtering = {
+            'title': ALL,
+            }
 
 class PersonResource(ModelResource):
     # the person resource always gets their papers

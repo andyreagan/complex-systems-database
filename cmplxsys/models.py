@@ -192,6 +192,8 @@ class Paper(models.Model):
     bibref = models.CharField(max_length=200, null=True, blank=True)
     timescited = models.CharField(max_length=20, null=True, blank=True)
 
+    author_list_sorted = models.BooleanField(default=False,help_text="Set this to true when the author list is ordered. Will hide the warning on the paper page.")
+
     authors = models.ManyToManyField(Person,through='Order')
     # authors = models.ManyToManyField(Person)    
     fromclass = models.ManyToManyField(Course, blank=True)
