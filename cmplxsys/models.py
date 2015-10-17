@@ -225,7 +225,7 @@ class Press(models.Model):
     organization = models.CharField(max_length=200, null=True, blank=True)
     papers = models.ManyToManyField(Paper, blank=True)
     projects = models.ManyToManyField(Project, blank=True)
-    people = models.ManyToManyField(Person, blank=True)
+    favorited_by = models.ManyToManyField(Person, blank=True)
     image = models.FileField(upload_to=rename_files_press,default="press/blank.png",
                              help_text="Timestamp will automatically be added.")
 

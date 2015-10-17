@@ -1,4 +1,4 @@
-from cmplxsys.models import Person,Paper,Funding,Press,Project,Course,Position
+from cmplxsys.models import *
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 
@@ -22,6 +22,13 @@ class BasicPersonResource(ModelResource):
             'positions': ALL,
         }
 
+class ReallyBasicPersonResource(ModelResource):
+    class Meta:
+        # queryset = Person.objects.all().order_by('core_team_order')
+        queryset = Person.objects.all()
+        resource_name = 'personsupersimple'
+        fields = ['fullname']
+
 class BasicPositionResource(ModelResource):
     class Meta:
         queryset = Position.objects.all()
@@ -32,12 +39,19 @@ class BasicPositionResource(ModelResource):
 
 class PersonResource(ModelResource):
     # the person resource always gets their papers
-    papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource','paper_set',full=True)
+    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource','paper_set',full=True)
+    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource','paper_set',full=True)
     # this works!! but only if the bundle is not empty
-    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource',lambda bundle: bundle.obj.paper_set.all().order_by('-year'),full=True)
+    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource',lambda bundle: bundle.obj.paper_set.all().order_by('-sort_date'),full=True)
+    papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource',attribute=lambda bundle: Paper.objects.filter(authors=bundle.obj).order_by('sort_date'),full=True,null=True)
+    # papers = fields.ManyToManyField('cmplxsys.api.BasicPaperResource',lambda bundle: helper_fun(bundle),full=True)
 
     # press = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: Press.objects.all().order_by('-date'),full=True)
     press = fields.ManyToManyField('cmplxsys.api.BasicPressResource','press_set',full=True)
+    press_selected = fields.ManyToManyField('cmplxsys.api.BasicPressResource','press_set',full=True)
+    press_all = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: Press.objects.filter(papers=Paper.objects.filter(authors=bundle.obj)).order_by('-date'),full=True,null=True)
+    press_first = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: Press.objects.filter(papers=Paper.objects.filter(order=Order.objects.filter(author=bundle.obj,order=0))).order_by('-date'),full=True,null=True)
+    # allpress = fields.ManyToManyField('cmplxsys.api.BasicPressResource','press_set',full=True)
     # press = fields.ManyToManyField('cmplxsys.api.BasicPressResource',lambda bundle: bundle.obj.press_set.all().order_by('-date'),full=True)
     # .order_by('-date')
 
@@ -54,10 +68,14 @@ class PersonResource(ModelResource):
             'uname': ALL,
             'papers': ALL,
         }
+        ordering = {
+            'papers': ALL,
+            }
 
 class BasicPaperResource(ModelResource):
+    author = fields.ManyToManyField('cmplxsys.api.ReallyBasicPersonResource',lambda bundle: bundle.obj.authors.all().order_by('order__order'),full=True)
     class Meta:
-        queryset = Paper.objects.all().order_by('-year')
+        queryset = Paper.objects.all()
         resource_name = 'paper'
         filtering = {
             'title': ALL,
@@ -66,6 +84,7 @@ class BasicPaperResource(ModelResource):
         }
         ordering = {
             'year': ALL,
+            'sort_date': ALL,
         }
 
 class PaperResource(ModelResource):

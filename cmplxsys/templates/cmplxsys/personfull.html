@@ -11,6 +11,8 @@
 
 {% block content %}
 
+{{ payload|safe }}
+
 <div id="person" class="paper">
 <img src="{{ person.image.url }}" class="personimage"/>
 <h1>{{ person.fullname }}</h1>
