@@ -63,7 +63,7 @@ INSTALLED_APPS = (
     # 'mptt',  # utilities for implementing a modified pre-order traversal tree
     # 'menus',  # helper for model independent hierarchical website navigation
     # 'sekizai',  # for javascript and css management
-    # ' djangocms_admin_style',  # for the admin skin. You **must** add 'djangocms_admin_style' in the list before 'django.contrib.admin'.
+    # 'djangocms_admin_style',  # for the admin skin. You **must** add 'djangocms_admin_style' in the list before 'django.contrib.admin'.
     'suit',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -130,7 +130,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'CMPLXSYS_django',
         'USER': 'cmplxsys_admin',
-	# 'PASSWORD': 'wkNsvp76IFEajWzX',
+        # 'PASSWORD': 'wkNsvp76IFEajWzX',
         'PASSWORD': 'vgkKEN7JSfH1',
         'HOST': 'webdb.uvm.edu',
         'PORT': '3306',
@@ -155,6 +155,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJ_STATIC_ROOT')
+# export DJ_STATIC_ROOT=/users/c/m/cmplxsys/www-root/static
 
 MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/users/c/m/cmplxsys/www-root/static/media/'

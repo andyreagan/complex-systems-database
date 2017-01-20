@@ -1,7 +1,7 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime,timedelta
 from subprocess import call
-
+from scholar import *
 
 def rename_files_person(instance,filename):
     return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
@@ -88,6 +88,12 @@ class Person(models.Model):
         ordering = ('uname',)
         # order_with_respect_to = 'order__order'
 
+    def save(self, *args, **kwargs):
+        # return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
+        command = datetime.now().strftime("convert -geometry 163x -colorspace Gray {0} {0}".format(self.image._get_path()))
+        call(command,shell=True)
+        super(Person, self).save(*args, **kwargs)
+
 class Position(models.Model):
     TITLE_CHOICES = (
         ('PD', 'Post Doctoral Fellow'),
@@ -153,7 +159,7 @@ class Course(models.Model):
     url = models.CharField(max_length=2000, default="http://www.uvm.edu/~bagrow")
     nextoffering = models.DateTimeField('date offered next')
     numtimesoffered = models.CharField(max_length=200, null=True, blank=True)
-    imagelink = models.CharField(max_length=200, null=True, blank=True)
+    imagelink = models.URLField(max_length=200, null=True, blank=True)
 
     students = models.ManyToManyField(Person,related_name='courses_taught', blank=True)
     teachers = models.ManyToManyField(Person,related_name='courses_taken')
@@ -179,18 +185,27 @@ class Paper(models.Model):
     arxivpw = models.CharField(max_length=200, null=True, blank=True)
     journal = models.CharField(max_length=200, null=True, blank=True)
     volume = models.CharField(max_length=200, null=True, blank=True)
+    issue = models.CharField(max_length=200, null=True, blank=True,help_text="Will be exported as \"number\" in bibtex.")
     pages = models.CharField(max_length=200, null=True, blank=True)
     year = models.IntegerField(default=1950,help_text="Date to be used for formatting the citation.")
     sort_date = models.DateTimeField(help_text="Date to be used for sorting the paper in lists on the site.")
-    googlescholarlink = models.CharField(max_length=200, null=True, blank=True)
-    preprintlink = models.CharField(max_length=200, null=True, blank=True, help_text="Link to the preprint (arxiv or similar).")
-    supplementarylink = models.CharField(max_length=200, null=True, blank=True)
-    onlineappendices = models.CharField(max_length=200, null=True, blank=True)
-    journalpagelink = models.CharField(max_length=200, null=True, blank=True)
-    arxivlink = models.CharField(max_length=200, null=True, blank=True)
-    titlelink = models.CharField(max_length=200, null=True, blank=True, help_text="Link that will download on click of the title.")
+    googlescholarlink = models.URLField(max_length=200, null=True, blank=True)
+    preprintlink = models.URLField(max_length=200, null=True, blank=True, help_text="This will be the url to which PDF is linked.")
+    supplementarylink = models.URLField(max_length=200, null=True, blank=True)
+    onlineappendices = models.URLField(max_length=200, null=True, blank=True)
+    journalpagelink = models.URLField(max_length=200, null=True, blank=True)
+    arxivlink = models.URLField(max_length=200, null=True, blank=True)
+    titlelink = models.URLField(max_length=200, null=True, blank=True, help_text="Link that will download on click of the title.")
     bibref = models.CharField(max_length=200, null=True, blank=True)
     timescited = models.CharField(max_length=20, null=True, blank=True)
+    google_scholar_cluster_id = models.CharField(max_length=40, null=True, blank=True)
+    google_scholar_result_found = models.BooleanField(default=False)
+    google_scholar_most_recent_date = models.DateTimeField(null=True, blank=True)
+    google_scholar_raw_result = models.TextField(null=True, blank=True)
+    DOI = models.CharField(max_length=200, null=True, blank=True)
+    PMID= models.CharField(max_length=200, null=True, blank=True)
+    ISSN = models.CharField(max_length=200, null=True, blank=True)
+    altmetric_id = models.CharField(max_length=100, null=True, blank=True)
 
     author_list_sorted = models.BooleanField(default=False,help_text="Set this to true when the author list is ordered. Will hide the warning on the paper page.")
 
@@ -204,10 +219,53 @@ class Paper(models.Model):
     def __unicode__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        super(Paper, self).save(*args, **kwargs)
+        querier = ScholarQuerier()
+        settings = ScholarSettings()
+        querier.apply_settings(settings)
+        if self.google_scholar_cluster_id:
+            query = ClusterScholarQuery(cluster=self.google_scholar_cluster_id)
+        else:
+            query = SearchScholarQuery()
+            if len(self.authors.all().order_by('order')) > 0:
+                query.set_author(self.authors.all().order_by('order')[0].fullname)
+            query.set_phrase(self.title)
+            # tell it to look only for title
+            # query.set_scope(True)
+            query.set_num_page_results(1)
+
+        # if self.google_scholar_most_recent_date < (datetime.now()-timedelta(days=1)):
+        if True:
+            # look at this query we've constructed
+            # print(query)
+            self.google_scholar_most_recent_date = datetime.now()
+            querier.send_query(query)
+            # look at this querier object after hitting google
+            # print(querier)
+            print(len(querier.articles))
+            if len(querier.articles) > 0:
+                self.google_scholar_result_found = True
+                self.google_scholar_raw_result = str(querier.articles[0].attrs)
+                # print(querier.articles[0].attrs)
+                if self.year == 1950 and querier.articles[0].attrs['year'][0]:
+                    self.year = int(querier.articles[0].attrs['year'][0])
+                    # print("updating year")
+                self.timescited = querier.articles[0].attrs['num_citations'][0]
+                # print("updated citation count")
+                if querier.articles[0].attrs['cluster_id'][0]:
+                    self.google_scholar_cluster_id = querier.articles[0].attrs['cluster_id'][0]
+                #     print("updated cluster id")
+                # print("updated, saving...")
+                super(Paper, self).save(*args, **kwargs)
+            else:
+                # print("no result, saving...")
+                super(Paper, self).save(*args, **kwargs)
+
 class Order(models.Model):
     author = models.ForeignKey(Person)
     paper = models.ForeignKey(Paper)
-    order = models.IntegerField(default=0)
+    order = models.PositiveIntegerField(default=0)
         
 def rename_files_press(instance,filename):
     return datetime.now().strftime("press/%Y-%m-%d-%H-%M-{0}".format(filename))            
@@ -220,27 +278,14 @@ class Press(models.Model):
     author = models.CharField(max_length=200, null=True, blank=True,)
     date = models.DateTimeField('date published')
     description = models.CharField(max_length=2000, null=True, blank=True)
-    favorite = models.CharField(max_length=10, null=True, blank=True,)
-    imagelink = models.CharField(max_length=200, null=True, blank=True)
-    organization = models.CharField(max_length=200, null=True, blank=True)
-    papers = models.ManyToManyField(Paper, blank=True)
-    projects = models.ManyToManyField(Project, blank=True)
-    favorited_by = models.ManyToManyField(Person, blank=True)
+    favorite = models.IntegerField(default=0, null=True, blank=True,help_text="An integer than can be used to sort the press by.")
+    imagelink = models.URLField(max_length=200, null=True, blank=True,help_text="Not used (better to save the image in the database using \"image\" field at the bottom)")
+    organization = models.CharField(max_length=200, null=True, blank=True,help_text="e.g. New York Times")
+    papers = models.ManyToManyField(Paper, blank=True,help_text="Will show up with paper, and in people's \"all press\" feed and/or \"first author\" feed.")
+    projects = models.ManyToManyField(Project, blank=True,help_text="Will show up for the project, and for a person's press_project feed.")
+    people = models.ManyToManyField(Person, blank=True, help_text="Favorited by these people (will show up the \"favorited\" feed.")
     image = models.FileField(upload_to=rename_files_press,default="press/blank.png",
                              help_text="Timestamp will automatically be added.")
 
     def __unicode__(self):
         return self.title 
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,153 @@
+<!-- the full page build in jinja2 template in database app -->
+{% extends "cmplxsys/html5base.html" %}
+
+{% block headercss %}
+<style>
+  body { margin: 0; }
+  .paper-small-embed {
+    /* border: solid 1px; */
+    background-color: #edebe8;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    border-radius: 5px;
+    overflow: auto;
+    width: 550;
+    height: 130;
+    font-family: Helvetica, sans-serif;
+    font-size: 12px;
+    /* margin-bottom: 5px; */
+}
+
+.paper-small-embed-inner {
+    padding: 10px;
+    overflow: auto;
+}
+
+.paper-small-embed p {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    /* margin: 0; */
+}
+
+.paper-small-embed h2 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.paper-small-embed h3 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.paper-small-embed h5 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.paper-small-embed .img {
+    float: left;
+    display: inline-block;
+    margin-right: 10px;
+    /* width: 10%; */
+}
+
+.paper-small-embed img {
+    height: 100px;
+}
+
+.paper-small-embed-extra.hidden {
+    display: none;
+}
+
+.paper-small-embed .title {
+    /* float: left; */
+    /* margin-left: 10px; */
+    /* display: inline-block; */
+    /* overflow: auto; */
+    /* /\* width: 90%; *\/ */
+    font-size: 15px;
+}
+
+.paper-small-embed.hidden {
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="paper-small-embed">
+  <div class="paper-small-embed-inner">		
+    <div class="img"><img src="http://cmplxsys.w3.uvm.edu/static/media/{{ paper.image }}"/></div>
+    <div class="title"><strong>{{ paper.title }}</strong></div>
+    <!-- <h5>{{ paper.HTMLabstract }}</h5> -->
+    <!-- <hr>				 -->
+    <!-- <h5>Status: {{ paper.status }}</h5> -->
+    <!-- <h5>Citations: {{ paper.timescited }}</h5> -->
+    <p>{{ author_list }} ({{ paper.year }}). {{ paper.journal }}.</p>
+    <a href="http://cmplxsys.w3.uvm.edu/db/bibgen/{{ paper.id }}" target="_blank">Cite (bibtex)</a>
+    <!-- <hr> -->
+    {% if paper.arxivlink|length > 0 %}<a href="{{ paper.arxivlink }}" target="_blank">arXiv link</a>{% endif %}
+    {% if paper.journalpagelink|length > 0 %}<a href="{{ paper.journalpagelink }}" target="_blank">Journal link</a>{% endif %}
+    {% if paper.supplementarylink|length > 0 %}<a href="{{ paper.supplementarylink }}" target="_blank">Supplementary link</a>{% endif %}
+    {% if paper.onlineappendices|length > 0 %}<a href="{{ paper.onlineappendices }}" target="_blank">Online Appendices</a>{% endif %}
+  </div>
+</div>
+<br>
+{% comment %}
+<h3>Authors:</h3>
+<div class="authorlist">			
+  {% for person in author %}
+  <div class="author-smaller">
+    <div class="author-smaller-inner">		
+      <div class="img">
+//         {% if person.image is equalto person/blank.png %}
+//         {% else %}
+        <img src="http://cmplxsys.w3.uvm.edu{{ person.image }}" alt="Person image"/>
+//         {% endif %}
+      </div>      
+      <div class="title"><h4><a href="/~cmplxsys/people/?uname={{ person.uname }}">{{ person.fullname }}</a></h4></div>
+      <div class="title">
+        {% if person.webpage|length > 0 %}
+        <a href="{{ person.webpage }}"><i class="fa fa-external-link fa-fw fa-lg"></i></a>
+        {% endif %}
+        {% if person.twitter|length > 0 %}
+        <a href="http://twitter.com/{{ person.twitter }}"><i class="fa fa-twitter fa-fw fa-lg"></i></a>
+        {% endif %}
+        {% if person.linkedin|length > 0 %}
+        <a href="http://www.linkedin.com/{{ person.linkedin }}"><i class="fa fa-linkedin fa-fw fa-lg"></i></a>
+        {% endif %}
+      </div>
+    </div> <!-- col -->
+  </div> <!-->
+  {% endfor %}
+</div> <!-- col -->    
+<br>
+{% if not author_list_sorted %}
+<h4>**May not be in order</h4>
+{% endif %}
+<br>				
+{% if press|length > 0 %}
+<h3>Most recent press: </h3>
+<div class="presslist">
+{% for my_press in press %}
+  <div class="press-small">
+    <div class="press-small-inner">
+      <div class="img"><img src="http://cmplxsys.w3.uvm.edu{{ my_press.image }}"/></div>
+      <div class="title"><h5>{{ my_press.title }}</h5>
+        <h5><a href="{{ my_press.url }}" target="_blank">Link</a></h5></div>
+    </div> <!-- .press-small-inner -->
+  </div> <!-- .press-small -->
+{% endfor %}
+</div> <!-- .presslist -->
+<!-- <a id="showallpress">(show all)</a> -->
+{% endif %}
+<a id="dbeditlink" style="color: lightgrey; font-size: 8pt;" href="http://cmplxsys.w3.uvm.edu/db/admin/cmplxsys/paper/{{id}}/" target="_blank">[edit database entry]</a>
+{% endcomment %}
+{% endblock %}
+
+
+{% block bottomjs %}
+<!-- <script src="/static/wordpress/js/jquery-1.9.1.js"> -->
+<!-- <script src="/static/wordpress/js/bootstrap.js"> -->
+{% endblock %}

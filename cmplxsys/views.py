@@ -8,7 +8,7 @@ from django.views.generic import View
 
 from mysite.settings import STATIC_ROOT
 
-from cmplxsys.models import Person,Paper
+from cmplxsys.models import Person,Paper,Project
 
 # from django.views.decorators.csrf import csrf_exempt, csrf_protect
 # from django.core import serializers
@@ -22,6 +22,12 @@ from json import dumps
 # import json
 # import datetime
 
+class bibtex(View):
+    def get(self, request, paper):
+        dbentry = get_object_or_404(Paper,id=paper)
+        authors = dbentry.authors.all().order_by('order__order')
+        return render(request, 'cmplxsys/bibtex.html',{"paper": dbentry, "authors": authors})
+        
 class personfull(View):
      # return all of the annotations for a book
     def get(self, request, person):
@@ -72,3 +78,33 @@ class paperfull(View):
                          )
         else:
             return HttpResponse('<p>Paper ID=<strong>{0}</strong> not found in our database</p>'.format(paper))
+
+
+class paperembed(View):
+     # return all of the annotations for a book
+    def get(self, request, paper):
+        dbentry = get_object_or_404(Paper,id=paper)
+
+        authors = dbentry.authors.all().order_by('order__order')
+        press_list = dbentry.press_set.all()
+        # author_list_1 = "";
+        # for i,author in enumerate(authors):
+        #     author_list_1 += author.fullname
+        #     if i<len(authors)-1:
+        #         author_list_1 += ", "
+        author_list_2 = ", ".join([author.fullname for author in authors])
+        return render(request,
+                      'cmplxsys/paperembed.html',
+                      {"paper": dbentry,
+                       "author_list": author_list_2,})
+    
+class projectpressembed(View):
+     # return all of the annotations for a book
+    def get(self, request, project):
+        my_project = get_object_or_404(Project,title__startswith=project).press_set.order_by('-date')
+        for press in my_project:
+            press.monthdate = press.date.strftime("%B %Y")
+        return render(request,
+                      'cmplxsys/manypressembed.html',
+                      {"press_list": my_project,})
+        

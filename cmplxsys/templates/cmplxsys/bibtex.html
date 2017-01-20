@@ -1,0 +1,30 @@
+<!-- the full page build in jinja2 template in database app -->
+{% extends "cmplxsys/html5base.html" %}
+
+{% block headercss %}
+<!-- <link rel="stylesheet" href="/static/wordpress/css/paper.css"> -->
+<!-- <link rel="stylesheet" href="/static/wordpress/css/bootstrap.css"> -->
+<!-- <link rel="stylesheet" href="/static/wordpress/css/paperpagefullinside.css"> -->
+{% endblock %}
+
+{% block content %}
+<pre style="word-wrap: break-word; white-space: pre-wrap;">@article{% templatetag openbrace %}{{ paper.bibref }},
+  title={% templatetag openbrace %}{{ paper.title }}{% templatetag closebrace %},
+  author={% templatetag openbrace %}{% for author in authors %}{{ author.fullname }}{% if not forloop.last %} and {% endif %}{% endfor %}{% templatetag closebrace %},{% if paper.journal %}
+  journal={% templatetag openbrace %}{{ paper.journal }}{% templatetag closebrace %},{% endif %}{% if paper.volume %}
+  volume={% templatetag openbrace %}{{ paper.volume }}{% templatetag closebrace %},{% endif %}{% if paper.issue %}
+  number={% templatetag openbrace %}{{ paper.issue }}{% templatetag closebrace %},{% endif %}{% if paper.pages %}
+  pages={% templatetag openbrace %}{{ paper.pages }}{% templatetag closebrace %},{% endif %}{% if paper.arxiv %}
+  arXiv={% templatetag openbrace %}{{ paper.arxiv }}{% templatetag closebrace %},{% endif %}{% if paper.onlineappendices %}
+  onlineappendices={% templatetag openbrace %}{{ paper.onlineappendices }}{% templatetag closebrace %},{% endif %}{% if paper.journalpagelink %}
+  journalpage={% templatetag openbrace %}{{ paper.journalpagelink }}{% templatetag closebrace %},{% endif %}
+  year={% templatetag openbrace %}{{ paper.year }}{% templatetag closebrace %},
+  citations={% templatetag openbrace %}{{ paper.timescited }}{% templatetag closebrace %}
+}</pre>
+{% endblock %}
+
+
+{% block bottomjs %}
+<!-- <script src="/static/wordpress/js/jquery-1.9.1.js"> -->
+<!-- <script src="/static/wordpress/js/bootstrap.js"> -->
+{% endblock %}
