@@ -76,7 +76,8 @@ class Person(models.Model):
                              help_text="Timestamp will automatically be added and will automatically convert to grayscale.")
     collaborator = models.BooleanField(default=False,help_text="If they don't work at/go to UVM.")
     alumni = models.BooleanField(default=False,help_text="If they used to go here.")
-
+    current_student = models.BooleanField(default=False,help_text="If they currently go here.")
+    position_desc = models.CharField(max_length=400,null=True, blank=True, default="",help_text="Current position, or former degree awarded for alumni. For current, set either PD, PhD, MS, UG, CERT.")
     core_team = models.BooleanField(default=False,help_text="Will show up on the core team page.")
     core_team_order = models.IntegerField(default=0,help_text="Order to sort if core_team=True.")
     associated_faculty = models.BooleanField(default=False,help_text="Will show up on the associated faculty page.")
