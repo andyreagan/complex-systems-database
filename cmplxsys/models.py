@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime,timedelta
 from subprocess import call
 from scholar import *
+import re
 
 def rename_files_person(instance,filename):
     return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
@@ -12,7 +13,7 @@ def rename_files_person(instance,filename):
 # which is everything else
 class Person(models.Model):
     # username
-    uname = models.CharField(max_length=20)
+    uname = models.CharField(max_length=20,help_text="This is the username, used in links on the site. Make it a full name (because we can), i.e. Andy Reagan should be andyreagan, not areagan. A-Za-z characters allowed (for links sake).")
     # eventually can build a model for affiliations (VACC, UVM, CSYS, CS, MATH, etc)
     # but bigger fish to fry right now
     institution = models.CharField(max_length=200, default="University of Vermont",
@@ -40,14 +41,14 @@ class Person(models.Model):
     secondaryrole4 = models.CharField(max_length=200, null=True, blank=True, default="",)
 
     blurb = models.TextField(null=True, blank=True, default="",)
-    fullname = models.CharField(max_length=200)
+    fullname = models.CharField(max_length=200,help_text="This is the display name. Shown on headings for lists of people, and the personal page (and if following first,middle,last are blank, used for paper author name.")
     # split up name is optional, for now
-    first = models.CharField(max_length=200, null=True, blank=True, default="")
-    middle = models.CharField(max_length=200, null=True, blank=True, default="")
+    first = models.CharField(max_length=200, null=True, blank=True, default="",help_text="These first, middle, last, are for building the bibtex entry and display paper author lists.")
+    middle = models.CharField(max_length=200, null=True, blank=True, default="",help_text="If an abbreviation, have the dot here.")
     last = models.CharField(max_length=200, null=True, blank=True, default="")
     sur = models.CharField(max_length=200, null=True, blank=True, default="")
     webpage = models.CharField(max_length=200, null=True, blank=True, default="",
-                               help_text="Full URL.")
+                               help_text="Full URL of person webpage.")
     linkedin = models.CharField(max_length=200, null=True, blank=True, default="",
                                help_text="https://www.linkedin.com/_________")
     twitter = models.CharField(max_length=200, null=True, blank=True, default="",
@@ -77,6 +78,7 @@ class Person(models.Model):
     collaborator = models.BooleanField(default=False,help_text="If they don't work at/go to UVM.")
     alumni = models.BooleanField(default=False,help_text="If they used to go here.")
     current_student = models.BooleanField(default=False,help_text="If they currently go here.")
+    post_doc = models.BooleanField(default=False,help_text="Currently post doctoral scholar.")
     position_desc = models.CharField(max_length=400,null=True, blank=True, default="",help_text="Current position, or former degree awarded for alumni. For current, set either PD, PhD, MS, UG, CERT.")
     core_team = models.BooleanField(default=False,help_text="Will show up on the core team page.")
     core_team_order = models.IntegerField(default=0,help_text="Order to sort if core_team=True.")
@@ -85,14 +87,17 @@ class Person(models.Model):
     def __unicode__(self):
         return self.fullname
 
-    class Meta:
-        ordering = ('uname',)
+    # class Meta:
+    #     ordering = ('order__order',)
         # order_with_respect_to = 'order__order'
 
     def save(self, *args, **kwargs):
         # return datetime.now().strftime("people/%Y-%m-%d-%H-%M-{0}".format(filename))
         command = datetime.now().strftime("convert -geometry 163x -colorspace Gray {0} {0}".format(self.image._get_path()))
-        call(command,shell=True)
+        # do not grayscale the image, because we can do this in CSS
+        # call(command,shell=True)
+        # we also don't need to make it square, since we can handle that in CSS too
+        # (also, make it a circle in CSS)
         super(Person, self).save(*args, **kwargs)
 
 class Position(models.Model):
@@ -184,9 +189,9 @@ class Paper(models.Model):
     status = models.CharField(max_length=200)
     arxiv = models.CharField(max_length=200, null=True, blank=True)
     arxivpw = models.CharField(max_length=200, null=True, blank=True)
-    journal = models.CharField(max_length=200, null=True, blank=True)
+    journal = models.CharField(max_length=200, null=True, blank=True,default="Preprint",help_text="Name of the journal. Leave \"Preprint\" for preprints")
     volume = models.CharField(max_length=200, null=True, blank=True)
-    issue = models.CharField(max_length=200, null=True, blank=True,help_text="Will be exported as \"number\" in bibtex.")
+    issue = models.CharField(max_length=200, null=True, blank=True,help_text="Will be exported as \"number\" in bibtex. I.e. the 1 in \"EPJ Data Science, 5(1), 237-239.\"")
     pages = models.CharField(max_length=200, null=True, blank=True)
     year = models.IntegerField(default=1950,help_text="Date to be used for formatting the citation.")
     sort_date = models.DateTimeField(help_text="Date to be used for sorting the paper in lists on the site.")
@@ -197,8 +202,8 @@ class Paper(models.Model):
     journalpagelink = models.URLField(max_length=200, null=True, blank=True)
     arxivlink = models.URLField(max_length=200, null=True, blank=True)
     titlelink = models.URLField(max_length=200, null=True, blank=True, help_text="Link that will download on click of the title.")
-    bibref = models.CharField(max_length=200, null=True, blank=True)
-    timescited = models.CharField(max_length=20, null=True, blank=True)
+    bibref = models.CharField(max_length=200, null=True, blank=True,help_text="This will be generated automatically as well, don't both filling out unless you don't want the Google Scholar format, e.g. \"dodds2016positivity\".")
+    timescited = models.CharField(max_length=20, null=True, blank=True,help_text="We'll automatically try to fill this on save using google scholar (and set the cluster_id below).")
     google_scholar_cluster_id = models.CharField(max_length=40, null=True, blank=True)
     google_scholar_result_found = models.BooleanField(default=False)
     google_scholar_most_recent_date = models.DateTimeField(null=True, blank=True)
@@ -217,11 +222,35 @@ class Paper(models.Model):
     image = models.FileField(upload_to=rename_files_paper,default="papers/blank.png",
                              help_text="Timestamp will automatically be added.")
 
+    class Meta:
+        ordering = ['-sort_date']
+        
     def __unicode__(self):
         return self.title
 
     def save(self, *args, **kwargs):
         super(Paper, self).save(*args, **kwargs)
+        # if self.bibref == "" or not self.bibref:
+        # automatically regenerate...why not
+        if True:
+            def get_first_noun(title):
+                non_nouns = ["the","of"]
+                i = 0
+                while title.split(" ")[i].lower() in non_nouns:
+                    i+=1
+                # this extracts only the a-z characters
+                # return title.split(" ")[i].lower().replace("'","")
+                # weak, do better
+                # return "".join(re.split("[^a-z]*", title.split(" ")[i].lower())
+                # this also works, a bit cleaner I think
+                return re.sub(r"[^a-z]+", "", title.split(" ")[i].lower())
+            if len(self.authors.all()) == 0:
+                print(self.title," has no authors")
+                firstauthor = "unknown"
+            else:
+                firstauthor = self.authors.all()[0].last.lower()
+            self.bibref = firstauthor + str(self.year) + get_first_noun(self.title)
+            super(Paper, self).save(*args, **kwargs)
         querier = ScholarQuerier()
         settings = ScholarSettings()
         querier.apply_settings(settings)
@@ -237,7 +266,7 @@ class Paper(models.Model):
             query.set_num_page_results(1)
 
         # if self.google_scholar_most_recent_date < (datetime.now()-timedelta(days=1)):
-        if True:
+        if False:
             # look at this query we've constructed
             # print(query)
             self.google_scholar_most_recent_date = datetime.now()
@@ -267,6 +296,8 @@ class Order(models.Model):
     author = models.ForeignKey(Person)
     paper = models.ForeignKey(Paper)
     order = models.PositiveIntegerField(default=0)
+    class Meta:
+        ordering = ['order']
         
 def rename_files_press(instance,filename):
     return datetime.now().strftime("press/%Y-%m-%d-%H-%M-{0}".format(filename))            
@@ -290,3 +321,6 @@ class Press(models.Model):
 
     def __unicode__(self):
         return self.title 
+
+    class Meta:
+        ordering = ['-date']
