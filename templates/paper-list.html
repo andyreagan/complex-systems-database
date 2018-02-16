@@ -1,0 +1,41 @@
+{% include 'combined-styles.html' %}
+{% if papers %}
+<h4>Most recent papers:</h4>
+<div class="paperlist">
+{% for paper in papers %}
+  {% if forloop.counter0 < 25 %}
+  <div class="paper-small">
+  {% else %}            
+  <div class="paper-small hidden extra">
+  {% endif %}
+    <div class="paper-small-inner">
+      <div class="img">
+        <a href="/research/publications/{{ paper.bibref }}"><img src="{{ paper.image.url }}"/></a>
+        <!-- <a href="{{ paper.titlelink }}"><img src="{{ paper.image.url }}"/></a> -->
+      </div> <!-- .img -->
+      <div class="title">
+        {% for author in paper.authors.all %}<a href="/people/core-team/{{ author.uname }}" class="authorlink">{{ author.fullname }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
+        <!-- {{ paper.author_list }}.<br /> -->
+        <strong>{{ paper.title }}</strong>.
+        {% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}{{ paper.pages }}, {{ paper.volume }}, {% endif %}{% endif %}{{ paper.year }}.<br />
+        <!-- [pdf] [journal page] [arXiv] [Online appendices] -->
+        [<a href="{{ paper.preprintlink }}" target="_blank">pdf</a>]
+        {% if paper.journalpagelink %}[<a href="{{ paper.journalpagelink }}" target="_blank">journal page</a>]{% endif %}
+        {% if paper.arxivlink %}[<a href="{{ paper.arxivlink }}" target="_blank">arXiv</a>]{% endif %}
+        {% if paper.onlineappendices %}[<a href="{{ paper.onlineappendices }}" target="_blank">online appendices</a>]{% endif %}
+    <i class="fa fa-expand expandpaperbutton"></i>
+      </div> <!-- .title -->
+      <div class="paper-small-extra hidden">
+        <br /><strong>Abstract:</strong><br />{{ paper.HTMLabstract|safe }}<br />
+        <br /><div><strong>Cite:</strong> [<a href="/bibgen/{{ paper.id }}/" target="_blank">bibtex</a>]
+          <span style="float: right">
+            <a id="dbeditlink" style="color: lightgrey; font-size: 8pt;" href="/admin/cmplxsys/paper/{{ paper.id }}/" target="_blank">[edit database entry]</a>
+        </span>
+        </div>
+      </div> <!-- .paper-small-extra -->
+    </div> <!-- .paper-small-inner -->
+  </div> <!-- .paper-small -->
+  {% endfor %}
+  <!-- <a id="showallpapers">(show all)</a> -->
+</div> <!-- .paperlist -->
+{% endif %}

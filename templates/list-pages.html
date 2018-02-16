@@ -1,0 +1,36 @@
+<style>
+  img.blackwhite{
+  /* -webkit-filter: grayscale(1); */
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  /* filter: url(#greyscale); */
+  /* filter: gray; */
+  }
+
+  img.blackwhite:hover {
+  -webkit-filter: grayscale(0%);
+  filter: none;
+  }          
+</style>
+{% for p in people %}
+<div class="bio-card">
+  <table cellspacing="10" cellpadding="10">
+    <tbody>
+      <tr>
+        <td width="220">
+          <img class="bio-image blackwhite" alt="{{ p.fullname }}" src="{{ p.image.url }}" width="180" height="228"/>
+        </td>
+        <td class="bio-text" style="padding: 15px">
+          <h2><strong>{{ p.fullname }}</strong>
+	    {% if p.webpage|length > 0 %}&nbsp;
+	    <a href="{{ p.website }}"><i class="fa fa-external-link" aria-hidden="true"></i></a></h2>
+          {% endif %}
+	  <br>
+	  <p><i>{{ p.role0 }}{% if p.affiliation0|length > 0 %}, {{ p.affiliation0 }}{% endif %}</i></p>
+	  <p>{{ p.blurb | safe }}</p>
+        </td>
+      </tr>
+    </tbody>
+  </table cellspacing="10" cellpadding="10">                                  
+</div class="bio-card">
+{% endfor %}

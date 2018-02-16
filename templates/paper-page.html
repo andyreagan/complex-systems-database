@@ -1,0 +1,128 @@
+{% include "combined-styles.html" %}
+{% if paper %}
+<!-- <div class="paper-small"> -->
+<!--   <div class="paper-small-inner"> -->
+<!--       <div class="img"> -->
+<!--         <\!-- <a href="/papers/{{ paper.bibref }}/"><img src="{{ paper.image.url }}"/></a> -\-> -->
+<!--         <a href="{{ paper.titlelink }}"><img src="{{ paper.image.url }}"/></a> -->
+<!--       </div> <\!-- .img -\-> -->
+<!--       <div class="title"> -->
+<!--         {% for author in paper.authors.all %}<a href="/people/core-team/{{ author.uname }}" class="authorlink">{{ author.fullname }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}. -->
+<!--         <\!-- {{ paper.author_list }}.<br /> -\-> -->
+<!--         <strong>{{ paper.title }}</strong>. -->
+<!--         {% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}{{ paper.pages }}, {{ paper.volume }}, {% endif %}{% endif %}{{ paper.year }}.<br /> -->
+<!--         <\!-- [pdf] [journal page] [arXiv] [Online appendices] -\-> -->
+<!--         [<a href="{{ paper.preprintlink }}" target="_blank">pdf</a>] -->
+<!--         {% if paper.journalpagelink %}[<a href="{{ paper.journalpagelink }}" target="_blank">journal page</a>]{% endif %} -->
+<!--         {% if paper.arxivlink %}[<a href="{{ paper.arxivlink }}" target="_blank">arXiv</a>]{% endif %} -->
+<!--         {% if paper.onlineappendices %}[<a href="{{ paper.onlineappendices }}" target="_blank">online appendices</a>]{% endif %} -->
+<!--     <i class="fa fa-expand expandpaperbutton"></i> -->
+<!--       </div> <\!-- .title -\-> -->
+<!--       <div class="paper-small-extra hidden"> -->
+<!--         <br /><strong>Abstract:</strong><br />{{ paper.HTMLabstract|safe }}<br /> -->
+<!--         <br /><div><strong>Cite:</strong> [<a href="/bibgen/{{ paper.id }}/" target="_blank">bibtex</a>] -->
+<!--           <span style="float: right"> -->
+<!--             <a id="dbeditlink" style="color: lightgrey; font-size: 8pt;" href="/admin/cmplxsys/paper/{{ paper.id }}/" target="_blank">[edit database entry]</a> -->
+<!--         </span> -->
+<!--         </div> -->
+<!--       </div> <\!-- .paper-small-extra -\-> -->
+<!--     </div> <\!-- .paper-small-inner -\-> -->
+<!-- </div> <\!-- .paper-small -\-> -->
+
+<div class="row     ">
+  <div class="columns small-4   medium-4   "> 
+
+<h6 class="text-center"><a href="/research/publications/{{ next_p.bibref }}"><i class="fa fa-long-arrow-left"></i> {{ next_text }} <i class="fa fa-file-text-o" aria-hidden="true"></i><br>{{ next_p.title }}</a>
+</h6>
+
+</div>
+
+<div class="columns small-1   medium-1   "> &nbsp;</div>
+<div class="columns small-2   medium-2   "> 
+<h6 class="text-center     "><a href="/research/publications/{{ rand.bibref }}">
+    Random paper <i class="fa fa-cube"></i></a></h6>
+</div>
+<div class="columns small-1   medium-1   "> &nbsp;</div>
+
+<div class="columns small-4   medium-4   ">
+<h6 class="text-center     "><a href="/research/publications/{{ prev_p.bibref }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{ prev_text }} <i class="fa fa-long-arrow-right"></i><br>{{ prev_p.title }}</a>
+</h6>
+</div>
+</div>
+
+<br>
+<div class="person-big">
+  <div class="person-big-inner">		
+    <div class="img"><img src="{{ paper.image.url }}"/></div>
+    <div class="title"><h2><strong>{{ paper.title }}</strong></h2>
+    <p>{% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}<strong>{{ paper.volume }}</strong>, {{ paper.pages }}, {% endif %}{% endif %}{{ paper.year }}</p>
+    <p><strong>Abstract:</strong> {{ paper.HTMLabstract|safe }}</p>
+    <hr style="border-color: #222;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-width: .5px;
+    opacity: 1;">				
+    <p>Status: {{ paper.status }}</p>
+    <p>Citations: {{ paper.timescited }}</p>
+    <p>Cite: [<a href="/bibgen/{{ paper.bibref }}/" target="_blank">bibtex</a>]</p>
+    <hr style="border-color: #222;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-width: .5px;
+    opacity: 1;">
+    {% if arxivlink|length > 0 %}<p><a href="{{ paper.arxivlink }}" target="_blank">arXiv link</a></p>{% endif %}
+    {% if journalpagelink|length > 0 %}<p><a href="{{ paper.journalpagelink }}" target="_blank">Journal link</a></p>{% endif %}
+    {% if supplementarylink|length > 0 %}<p><a href="{{ paper.supplementarylink }}" target="_blank">Supplementary link</a></p>{% endif %}
+      </div> <!-- .title -->
+  </div> <!-- .article-big-inner -->
+</div> <!-- .article-big -->
+<br>
+<h5>Authors:</h5>
+<div class="authorlist">			
+  {% for person in paper.authors.all %}
+  <div class="author-smaller">
+    <div class="author-smaller-inner">		
+      <div class="img">
+        <a href="/people/core-team/{{ person.uname }}"><img src="{{ person.image.url }}" alt="Person image"/></a>
+      </div>      
+      <div class="title"><h4><a href="/people/core-team/{{ person.uname }}">{{ person.fullname }}</a></h4></div>
+      <div class="title">
+        {% if person.webpage|length > 0 %}
+        <a href="{{ person.webpage }}"><i class="fa fa-external-link fa-fw fa-lg"></i></a>
+        {% endif %}
+        {% if person.twitter|length > 0 %}
+        <a href="http://twitter.com/{{ person.twitter }}"><i class="fa fa-twitter fa-fw fa-lg"></i></a>
+        {% endif %}
+        {% if person.linkedin|length > 0 %}
+        <a href="http://www.linkedin.com/{{ person.linkedin }}"><i class="fa fa-linkedin fa-fw fa-lg"></i></a>
+        {% endif %}
+      </div>
+    </div> <!-- col -->
+  </div> <!-->
+  {% endfor %}
+</div> <!-- col -->    
+<br>
+{% if not paper.author_list_sorted %}
+<h5>**May not be in order</h5>
+{% endif %}
+<br>
+{% if paper.press_set.all|length > 0 %}
+<h4>Most recent press: </h4>
+<div class="presslist container">
+{% for press in paper.press_set.all %}
+  <div class="press-small mix">
+    <div class="press-small-inner">
+      <div class="img"><img src="{{ press.image.url }}" class="pressimage"/></div>
+      <div class="title" ><a href="{{ press.url }}" target="_blank">{{ press.title }}</a></div>
+      <div class="press">{{ press.organization }}</div>
+      <div class="press">{{ press.date|date:"Y-m-d" }}</div>
+    </div> <!-- .press-small-inner -->
+  </div> <!-- .press-small -->
+  {% endfor %}
+  </div> <!-- .presslist -->            
+  <!-- <a id="showallpress">(show all)</a> -->
+  {% endif %}
+
+  <a id="dbeditlink" style="color: lightgrey; font-size: 8pt; float: right;" href="/admin/cmplxsys/paper/{{ paper.id }}/" target="_blank">[edit database entry]</a>
+
+{% endif %}

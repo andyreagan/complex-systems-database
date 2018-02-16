@@ -1,0 +1,20 @@
+{% include 'combined-styles.html' %}
+<h4>Most recent press: </h4>
+<div class="presslist container">
+{% for press in all_press %}
+  {% if forloop.counter0 < 10 %}
+  <div class="press-small mix">
+  {% else %}            
+  <div class="press-small mix hidden">
+  {% endif %} 
+    <div class="press-small-inner">
+      <div class="img"><img src="{{ press.image.url }}" class="pressimage"/></div>
+      <div class="title" ><a href="{{ press.url }}" target="_blank">{{ press.title }}</a></div>
+      <div class="press">{{ press.organization }}</div>
+      <div class="press">{{ press.date|date:"Y-m-d" }}</div>
+    </div> <!-- .press-small-inner -->
+  </div> <!-- .press-small -->
+  {% endfor %}
+  </div> <!-- .presslist -->            
+  <!-- <a id="showallpress">(show all)</a> -->
+    <a id="showallpress">(show all)</a>
