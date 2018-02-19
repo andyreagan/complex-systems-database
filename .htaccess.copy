@@ -1,0 +1,35 @@
+SetEnv wsgi_max_requests 1
+# MaxRequestsPerChild 1
+# MaxRequestsPerChild 4000
+# <IfModule mpm_prefork_module> 
+#     MaxRequestsPerChild   1
+# </IfModule>
+
+# Header set Access-Control-Allow-Origin "*"
+# Header set Access-Control-Allow-Origin "uvm.edu"
+
+# Options +FollowSymLinks -MultiViews
+RewriteEngine On
+
+RewriteRule ^rw_common/(.*)?$ /templatery/rw_common/$1 [QSA,NC,L]
+RewriteRule ^index_files/(.*)?$ /templatery/index_files/$1 [QSA,NC,L]
+RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+RewriteCond %{REQUEST_URI}  !^/static/.*$
+RewriteRule ^(.*?.js)$ /templatery/$1 [QSA,NC,L]
+RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+RewriteCond %{REQUEST_URI}  !^/static/.*$
+RewriteRule ^(.*?.css)$ /templatery/$1 [QSA,NC,L]
+RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+RewriteCond %{REQUEST_URI}  !^/static/.*$
+RewriteRule ^(.*?.jpg)$ /templatery/$1 [QSA,NC,L]
+RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+RewriteCond %{REQUEST_URI}  !^/static/.*$
+RewriteRule ^(.*?.png)$ /templatery/$1 [QSA,NC,L]
+# Alias /static/ /path/to/mysite.com/static/
+
+# Internally forward /Page/abc123 to /page.cfm?pagevar=abc123
+# RewriteRule ^Page/(.*)/?$ /page.cfm?pagevar=$1 [QSA,NC,L]
+
+# Internally forward /Page/abc123 to /page.cfm?pagevar=abc123
+RewriteRule "^([a-z_\-/0-9\ ]*)/?$" /db/wsgi.py/$1 [QSA,NC,L]
+

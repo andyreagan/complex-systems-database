@@ -23,8 +23,31 @@ def application(environ, start_response):
     # f = open("/users/c/m/cmplxsys/www-root/db/result.txt","w")
     # f.write(result)
     # f.close()
-    result['Access-Control-Allow-Origin'] = "*"
+
+    # this is now set by the .htaccess one level up
+    # result['Access-Control-Allow-Origin'] = "*"
     return result
 
 request_handler = application
+
+# def application(environ, start_response):
+#     status = '200 OK'
+
+#     if not 'mod_wsgi.process_group' in environ:
+#       output = 'EMBEDDED MODE'
+#     else:
+#       output = 'DAEMON MODE'
+
+#     response_headers = [('Content-Type', 'text/plain'),
+#                         ('Content-Length', str(len(output)))]
+
+#     start_response(status, response_headers)
+
+#     return [output]
+
+# request_handler = application
+
+# EMBEDDED MODE
+
+
 
