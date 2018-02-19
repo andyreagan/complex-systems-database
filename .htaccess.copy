@@ -1,18 +1,20 @@
-SetEnv wsgi_max_requests 1
-# MaxRequestsPerChild 1
-# MaxRequestsPerChild 4000
-# <IfModule mpm_prefork_module> 
-#     MaxRequestsPerChild   1
-# </IfModule>
+# Have the python site reload more frequently
+SetEnv wsgi_max_requests 5
 
+# Allow iframes...
 # Header set Access-Control-Allow-Origin "*"
 # Header set Access-Control-Allow-Origin "uvm.edu"
 
-# Options +FollowSymLinks -MultiViews
+# Rewrites!
 RewriteEngine On
 
+# push rw_common, index_files directories into templatery
 RewriteRule ^rw_common/(.*)?$ /templatery/rw_common/$1 [QSA,NC,L]
 RewriteRule ^index_files/(.*)?$ /templatery/index_files/$1 [QSA,NC,L]
+
+# the next four route all js, css, jpg, png extensions
+# that have neither the templatery or static folder
+# into templatery
 RewriteCond %{REQUEST_URI}  !^/templatery/.*$
 RewriteCond %{REQUEST_URI}  !^/static/.*$
 RewriteRule ^(.*?.js)$ /templatery/$1 [QSA,NC,L]
@@ -25,11 +27,7 @@ RewriteRule ^(.*?.jpg)$ /templatery/$1 [QSA,NC,L]
 RewriteCond %{REQUEST_URI}  !^/templatery/.*$
 RewriteCond %{REQUEST_URI}  !^/static/.*$
 RewriteRule ^(.*?.png)$ /templatery/$1 [QSA,NC,L]
-# Alias /static/ /path/to/mysite.com/static/
 
-# Internally forward /Page/abc123 to /page.cfm?pagevar=abc123
-# RewriteRule ^Page/(.*)/?$ /page.cfm?pagevar=$1 [QSA,NC,L]
-
-# Internally forward /Page/abc123 to /page.cfm?pagevar=abc123
+# and this rule then pushes everything else through the Django site!
 RewriteRule "^([a-z_\-/0-9\ ]*)/?$" /db/wsgi.py/$1 [QSA,NC,L]
 
