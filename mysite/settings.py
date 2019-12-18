@@ -76,13 +76,13 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'south',
     'tastypie',
-    'corsheaders',
+    # 'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     # an attempt to try to control CORS
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

@@ -1,6 +1,6 @@
 Django==1.6
 MySQL-python
 South
-django-tastypie
+django-tastypie==0.11.0
 #django-sekiza
 django-suit==0.2.13
