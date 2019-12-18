@@ -160,6 +160,10 @@ STATIC_ROOT = os.getenv('DJ_STATIC_ROOT')
 MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/users/c/m/cmplxsys/www-root/static/media/'
 
+SOUTH_MIGRATION_MODULES = {
+'default': 'cmplxsys.default.south_migrations',
+}
+
 # from http://ianalexandr.com/blog/getting-started-with-django-logging-in-5-minutes.html
 # settings.py
 # LOGGING = {

@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime,timedelta
 from subprocess import call
-from scholar import *
+#from scholar import *
 import re
 
 def rename_files_person(instance,filename):
@@ -212,9 +212,8 @@ class Paper(models.Model):
     PMID= models.CharField(max_length=200, null=True, blank=True)
     ISSN = models.CharField(max_length=200, null=True, blank=True)
     altmetric_id = models.CharField(max_length=100, null=True, blank=True)
-
     author_list_sorted = models.BooleanField(default=False,help_text="Set this to true when the author list is ordered. Will hide the warning on the paper page.")
-
+    #storylab = models.BooleanField(default=False)
     authors = models.ManyToManyField(Person,through='Order')
     # authors = models.ManyToManyField(Person)    
     fromclass = models.ManyToManyField(Course, blank=True)
@@ -324,3 +323,16 @@ class Press(models.Model):
 
     class Meta:
         ordering = ['-date']
+
+class Event(models.Model):
+    title = models.CharField(max_length=500, default="Life Changing Event")
+    start_date = models.DateTimeField('Event Start Date')
+    end_date = models.DateTimeField('Event End Date')
+    location = models.CharField(max_length=500, default="Burlington, Vermont")
+    description = models.TextField(default="There are none.",help_text="LaTeX format")
+    organizer_name = models.CharField(max_length=500,default="Roboctopus")
+    organizer_email = models.EmailField(max_length=500, null=True, blank=True)
+    event_page = models.URLField(max_length=500, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.title

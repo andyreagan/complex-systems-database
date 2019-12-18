@@ -1,5 +1,67 @@
 {% if p %}
 {% include 'combined-styles.html' %}
+
+
+<style>
+
+.paperlist{
+    /*text-align: center;*/
+    /*display: grid;
+    grid-template-columns: repeat(3, 3fr);
+    grid-auto-rows: 225px;
+    grid-column-gap: 10px;*/
+    text-align:center;
+}
+
+.presslist{
+    /*text-align: center;*/
+    /*display: grid;
+    grid-template-columns: repeat(3, 3fr);
+    grid-auto-rows: 225px;
+    grid-column-gap: 10px;*/
+    text-align:center;
+}
+
+
+.paper-small{
+  -webkit-box-sizing: border-box;
+  background: #f3f3f3;
+  border-radius: 4%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 4%;
+  display: inline-block;
+  width: 40%;
+  vertical-align: top;
+}
+
+.press-small{
+  -webkit-box-sizing: border-box;
+  background: #f3f3f3;
+  border-radius: 4%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 4%;
+  display: inline-block;
+  width: 40%;
+  vertical-align: top;
+}
+
+
+.main {
+    margin-left: 140px; /* Same width as the sidebar + left position in px */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+</style>
+
+
 <br>
 <div class="person-big">
   <div class="person-big-inner">
@@ -47,24 +109,27 @@
  </div>
 </div>
 <br>
+
+
+
 {% if p.paper_set.all|length > 0 %}
-<h4>Most recent papers:</h4>
+<h4 style="text-align:center;">Most recent papers:</h4>
 <div class="paperlist">
 {% for paper in p.paper_set.all %}
-  {% if forloop.counter0 < 10 %}
+  {% if forloop.counter0 < 4 %}
   <div class="paper-small">
   {% else %}            
   <div class="paper-small hidden extra">
   {% endif %}
     <div class="paper-small-inner">
       <div class="img">
-        <a href="/research/publications/{{ paper.bibref }}"><img src="{{ paper.image.url }}"/></a>
+        <a href="/research/publications/{{ paper.bibref }}"><img src="{{ paper.image.url }}"/></a> </br>
         <!-- <a href="{{ paper.titlelink }}"><img src="{{ paper.image.url }}"/></a> -->
       </div> <!-- .img -->
       <div class="title">
+        <p>{{ paper.title }}.</p>
         {% for author in paper.authors.all %}<a href="/people/core-team/{{ author.uname }}" class="subtlelink">{{ author.fullname }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
         <!-- {{ paper.author_list }}.<br /> -->
-        <strong>{{ paper.title }}</strong>.
         {% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}{{ paper.pages }}, {{ paper.volume }}, {% endif %}{% endif %}{{ paper.year }}.<br />
         <!-- [pdf] [journal page] [arXiv] [Online appendices] -->
         [<a href="{{ paper.preprintlink }}" target="_blank">pdf</a>]
@@ -84,21 +149,21 @@
     </div> <!-- .paper-small-inner -->
   </div> <!-- .paper-small -->
   {% endfor %}
-  {% if p.paper_set.all|length > 10 %}  
-  <a id="showallpapers">(show all)</a>
+  {% if p.paper_set.all|length > 4 %}
+  </br><a id="showallpapers">(show all)</a>
   {% endif %}
 </div> <!-- .paperlist -->
 <br>
 {% endif %}
 
 {% if p.press_set.all|length > 0 %}
-<h4>Most recent press: </h4>
-<div class="presslist container">
+<h4 style="text-align:center;">Most recent press: </h4>
+<div class="presslist">
 {% for press in p.press_set.all %}
-  {% if forloop.counter0 < 10 %}
-  <div class="press-small mix">
+  {% if forloop.counter0 < 4 %}
+  <div class="press-small">
   {% else %}            
-  <div class="press-small mix hidden">
+  <div class="press-small hidden extra" style="display:none;">
   {% endif %}  
     <div class="press-small-inner">
       <div class="img"><img src="{{ press.image.url }}" class="pressimage"/></div>
@@ -108,11 +173,10 @@
     </div> <!-- .press-small-inner -->
   </div> <!-- .press-small -->
   {% endfor %}
-  </div> <!-- .presslist -->            
-  <!-- <a id="showallpress">(show all)</a> -->
-   {% if p.press_set.all|length > 10 %}
-    <a id="showallpress">(show all)</a>
-    {% endif %}
+   <!--{% if p.press_set.all|length > 4 %}
+  </br><a id="showallpress">(show all)</a>
+    {% endif %}-->
+  </div> <!-- .presslist -->
     {% endif %}
 
 <!-- {% if project_list|length > 0 %} -->
@@ -262,4 +326,25 @@ if (typeof $.cookie('token') === 'undefined'){
                 // $(this).text("");
 	    });
 });
-</script>                                                                                                                            
+</script>
+
+  <script>
+
+            // could try to use this to show the edit button...
+$(document).ready(function() {
+if (typeof $.cookie('token') === 'undefined'){
+ // alert("cookie");
+} else {
+ // have cookie
+            }
+              	    $('#showallpress').click(function() {
+		    $(".press-small.extra").toggleClass("hidden");
+		    if ($(this).text() === "(hide extras)") {
+			$(this).text("(show all)");
+		    }
+		    else {
+			$(this).text("(hide extras)");
+		    }
+	    });
+});
+</script>

@@ -91,6 +91,25 @@ def addprojectstopress():
             # print C.projects
             C.save()
 
+# def addevent():
+#     f = open('imports/tblEvent.csv', 'r')
+#     courses = [[x.rstrip('",').lstrip('",') for x in line.rstrip().split(',"')] for line in f]
+#     f.close
+#     for c in courses:
+#         print
+#         c
+#         print
+#         len(c)
+#         if len(c[0]) > 1:
+#             title = c[0]
+#             if len(c) > 1:
+#                 desc = c[1]
+#             else:
+#                 desc = ''
+#             C = Event(title=title, description=description, start_date=start_date, end_date=end_date,location=location,image=image)
+#             print C
+#             C.save()
+
 def fixpaperabstracts():
     f = open('imports/tblPaper.csv','r')
     courses = [[x.rstrip('",').lstrip('",') for x in line.rstrip().split(':')] for line in f]

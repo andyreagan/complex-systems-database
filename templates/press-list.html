@@ -1,20 +1,308 @@
 {% include 'combined-styles.html' %}
-<h4>Most recent press: </h4>
-<div class="presslist container">
-{% for press in all_press %}
-  {% if forloop.counter0 < 10 %}
-  <div class="press-small mix">
-  {% else %}            
-  <div class="press-small mix hidden">
-  {% endif %} 
-    <div class="press-small-inner">
-      <div class="img"><img src="{{ press.image.url }}" class="pressimage"/></div>
-      <div class="title" ><a href="{{ press.url }}" target="_blank">{{ press.title }}</a></div>
-      <div class="press">{{ press.organization }}</div>
-      <div class="press">{{ press.date|date:"Y-m-d" }}</div>
-    </div> <!-- .press-small-inner -->
-  </div> <!-- .press-small -->
-  {% endfor %}
-  </div> <!-- .presslist -->            
-  <!-- <a id="showallpress">(show all)</a> -->
-    <a id="showallpress">(show all)</a>
+
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+
+            *,
+            *:before,
+            *:after {
+                box-sizing: border-box;
+            }
+
+            /* Controls
+---------------------------------------------------------------------- */
+
+.controls {
+    padding: 1rem;
+    text-align: center;
+}
+
+.control {
+    position: relative;
+    display: inline-block;
+    padding: .5rem;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 800;
+    color: white;
+    transition: background 150ms;
+    text-align:center;
+}
+
+.control:hover {
+    background: #f3f3f3;
+}
+
+.mixitup-control-active {
+    background: #393939;
+}
+
+.control:first-of-type {
+    border-radius: 3px 0 0 3px;
+}
+
+.control:last-of-type {
+    border-radius: 0 3px 3px 0;
+}
+
+/* Container
+---------------------------------------------------------------------- */
+
+.container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: space-between;
+}
+
+/* Target Elements
+---------------------------------------------------------------------- */
+
+.mix,
+.gap {
+    display: inline-flex;
+    vertical-align: top;
+}
+
+.mix {
+    margin-bottom: 1rem;
+    position: relative;
+    font-family: 'helvetica-neue', arial, sans-serif;
+}
+
+.mix:before {
+    content: '';
+    display: inline-block;
+    padding-top: 56.25%;
+}
+
+
+.mix p {
+    padding: 1rem;
+    display: inline-block;
+    line-height: 1.4;
+    font-weight: 300;
+}
+
+/* Grid Breakpoints
+---------------------------------------------------------------------- */
+
+
+@media only screen and (max-width: 300px) {
+    .mix,
+    .gap {
+        width: calc(100%/1 - (((1 - 1) * 1rem) / 1));
+    }
+}
+
+/* 2 Columns */
+
+@media screen and (min-width: 400px) {
+.mix,
+.gap {
+    width: calc(100%/2 - (((2 - 1) * 1rem) / 2));
+}
+}
+
+/* 3 Columns */
+
+@media screen and (min-width: 541px) {
+    .mix,
+    .gap {
+        width: calc(100%/3 - (((3 - 1) * 1rem) / 3));
+    }
+}
+
+/* 4 Columns */
+
+@media screen and (min-width: 961px) {
+    .mix,
+    .gap {
+        width: calc(100%/4 - (((4 - 1) * 1rem) / 4));
+    }
+}
+
+/* 5 Columns */
+
+@media screen and (min-width: 1281px) {
+    .mix,
+    .gap {
+        width: calc(100%/5 - (((5 - 1) * 1rem) / 5));
+    }
+}
+
+/* Buttons */
+button{
+    margin-left: 0.15em;
+    margin-right: 0.15em;
+    border-radius: 0.5em;
+    background-color: #f3f3f3;
+    padding: 1rem 1rem 1.0625rem 1rem;
+    color: black;
+}
+
+button:hover{
+    background-color: #b2cec4;
+    color: white;
+}
+
+.mixitup-control-active{
+    background-color: #2f6f75;
+    color: white;
+}
+select {
+    width: 30%;
+    display: inline-block;
+    margin-left: 0.25em;
+    margin-right: 4em;
+    margin-top: 4em;
+}
+.yearbutton{
+    display: inline-block;
+}
+
+input{
+    width: 30%;
+    margin: auto;
+}
+
+
+  </style>
+</head>
+
+
+
+<body>
+    <div class="controls">
+        <div class="mixitup-page-list " style="text-align:center">
+            <button type="button" class="mixitup-control mixitup-control-prev control" data-page="prev">«</button>
+            <button type="button" class="mixitup-control mixitup-control-first mixitup-control-active control" data-page="1">1</button>
+            <button type="button" class="mixitup-control control" data-page="2">2</button>
+            <button type="button" class="mixitup-control control" data-page="3">3</button>
+            <button type="button" class="mixitup-control control" data-page="4">4</button>
+            <span class="mixitup-control mixitup-control-truncation-marker control">…</span>
+            <button type="button" class="mixitup-control mixitup-control-last control" data-page="6">6</button>
+            <button type="button" class="mixitup-control mixitup-control-next control" data-page="next">»</button>
+        </div>
+
+       <!-- <input style="width:30%; margin:auto;" type="text" class="input" data-ref="input-search" placeholder="Search by Title"/> -->
+
+        <button class="yearbutton" type="button" data-sort="year:asc" >Year Asc</button>
+        <button class="yearbutton" type="button" data-sort="year:desc">Year Desc</button>
+
+        <!--<button type="button" data-sort="title:asc" >Title A-Z</button>
+        <button type="button" data-sort="title:desc">Title Z-A</button>-->
+    </div>
+
+    <div class="container">
+      <div class="presslist">
+      {% for press in presslist %}
+        <div class="press-small mix {{ press.title }}" data-year="{{ press.date }}" data-title="{{ press.title }}">
+          <div class="press-small-inner">
+            <div class="img"><img src="{{ press.image.url }}" class="pressimage"/></div>
+            <div class="title" ><a href="{{ press.url }}" target="_blank">{{ press.title }}</a></div>
+            <div class="press">{{ press.organization }}</div>
+            <div class="press">{{ press.date|date:"Y-m-d" }}</div>
+          </div> <!-- .press-small-inner -->
+      </div> <!-- .press-small -->
+      {% endfor %}
+    </div> <!-- .presslist -->
+  </div>
+
+    <!--<script src="{% static 'mixitup.min.js' %}"></script>-->
+                <script src="static/mixitup.min.js"></script>
+
+               <script src="static/mixitup-pagination.min.js"></script>
+
+        <script>
+            var containerEl = document.querySelector('.container');
+            var selectFilter = document.querySelector('.select-filter');
+            var selectSort = document.querySelector('.select-sort');
+            var inputSearch = document.querySelector('[data-ref="input-search"]');
+            var keyupTimeout;
+
+            var mixer = mixitup(containerEl, {
+                pagination: {
+                    limit: 30,
+                    loop: true,
+	            },
+                load: {
+                  //this is how it is sorted before anything is selected
+                  sort: 'year:desc'
+                  //sort: 'published-date:desc name:asc'
+                },
+                callbacks: {
+                    onMixClick: function() {
+                        // Reset the search if a filter is clicked
+
+                        if (this.matches('[data-filter]')) {
+                            inputSearch.value = '';
+                        }
+                    }
+                }
+            });
+
+            selectFilter.addEventListener('change', function() {
+                var selector = selectFilter.value;
+
+                mixer.filter(selector);
+            });
+
+            // Set up a handler to listen for "keyup" events from the search input
+
+            inputSearch.addEventListener('keyup', function() {
+                var searchValue;
+
+                if (inputSearch.value.length < 3) {
+                    // If the input value is less than 3 characters, don't send
+
+                    searchValue = '';
+                } else {
+                    searchValue = inputSearch.value.toLowerCase().trim();
+                }
+
+                // Very basic throttling to prevent mixer thrashing. Only search
+                // once 350ms has passed since the last keyup event
+
+                clearTimeout(keyupTimeout);
+
+                keyupTimeout = setTimeout(function() {
+                    filterByString(searchValue);
+                }, 350);
+            });
+
+            /**
+             * Filters the mixer using a provided search string, which is matched against
+             * the contents of each target's "class" attribute. Any custom data-attribute(s)
+             * could also be used.
+             *
+             * @param  {string} searchValue
+             * @return {void}
+             */
+
+            function filterByString(searchValue) {
+                if (searchValue) {
+                    // Use an attribute wildcard selector to check for matches
+
+                    mixer.filter('[class*="' + searchValue + '"]');
+                } else {
+                    // If no searchValue, treat as filter('all')
+
+                    mixer.filter('all');
+                }
+            }
+        </script>
+
+        <!-- this is supposed to go with the search bar -->
+        <script src="{% static 'search.js' %}"></script>
+
+    </body>
+</html>
+

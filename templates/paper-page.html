@@ -1,106 +1,254 @@
 {% include "combined-styles.html" %}
 {% if paper %}
-<!-- <div class="paper-small"> -->
-<!--   <div class="paper-small-inner"> -->
-<!--       <div class="img"> -->
-<!--         <\!-- <a href="/papers/{{ paper.bibref }}/"><img src="{{ paper.image.url }}"/></a> -\-> -->
-<!--         <a href="{{ paper.titlelink }}"><img src="{{ paper.image.url }}"/></a> -->
-<!--       </div> <\!-- .img -\-> -->
-<!--       <div class="title"> -->
-<!--         {% for author in paper.authors.all %}<a href="/people/core-team/{{ author.uname }}" class="authorlink">{{ author.fullname }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}. -->
-<!--         <\!-- {{ paper.author_list }}.<br /> -\-> -->
-<!--         <strong>{{ paper.title }}</strong>. -->
-<!--         {% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}{{ paper.pages }}, {{ paper.volume }}, {% endif %}{% endif %}{{ paper.year }}.<br /> -->
-<!--         <\!-- [pdf] [journal page] [arXiv] [Online appendices] -\-> -->
-<!--         [<a href="{{ paper.preprintlink }}" target="_blank">pdf</a>] -->
-<!--         {% if paper.journalpagelink %}[<a href="{{ paper.journalpagelink }}" target="_blank">journal page</a>]{% endif %} -->
-<!--         {% if paper.arxivlink %}[<a href="{{ paper.arxivlink }}" target="_blank">arXiv</a>]{% endif %} -->
-<!--         {% if paper.onlineappendices %}[<a href="{{ paper.onlineappendices }}" target="_blank">online appendices</a>]{% endif %} -->
-<!--     <i class="fa fa-expand expandpaperbutton"></i> -->
-<!--       </div> <\!-- .title -\-> -->
-<!--       <div class="paper-small-extra hidden"> -->
-<!--         <br /><strong>Abstract:</strong><br />{{ paper.HTMLabstract|safe }}<br /> -->
-<!--         <br /><div><strong>Cite:</strong> [<a href="/bibgen/{{ paper.id }}/" target="_blank">bibtex</a>] -->
-<!--           <span style="float: right"> -->
-<!--             <a id="dbeditlink" style="color: lightgrey; font-size: 8pt;" href="/admin/cmplxsys/paper/{{ paper.id }}/" target="_blank">[edit database entry]</a> -->
-<!--         </span> -->
-<!--         </div> -->
-<!--       </div> <\!-- .paper-small-extra -\-> -->
-<!--     </div> <\!-- .paper-small-inner -\-> -->
-<!-- </div> <\!-- .paper-small -\-> -->
+
+<style>
+
+
+@media only screen and (max-width: 300px) {
+    .row{
+        max-width: 300px;
+    }
+
+    .large_3{
+      width: 100%;
+    }
+}
+
+.controls{
+    display: none;
+}
+
+.person-big {
+    background-color: white;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    border-radius: 5px;
+    overflow: auto;
+    margin: auto;
+    margin-bottom: 1em;
+}
+
+.person-big-inner {
+    padding: 10px;
+    text-align: center;
+}
+
+.person-big .social-links {
+    /* margin-left: auto; */
+    padding-top: 0px;
+    padding-bottom: 15px;
+    /* float: right;
+    padding-right: 20px;
+    padding-top: 20px; */
+    text-align: center;
+}
+
+.person-big p {
+    margin-bottom: 3px;
+}
+
+.person-big .links p {
+  display: inline-block;
+  margin-right: 1em
+}
+
+p .links {
+  font-size: 70%;
+  display: inline-block;
+  display: inline-block;
+}
+
+hr {
+    clear: none;
+}
+
+.person-big h5 {
+    margin-bottom: 3px;
+}
+
+.person-big img {
+    margin: auto;
+    margin-bottom: 10px;
+    margin-right: 0.75em;
+    width: revert;
+}
+
+img{
+float: right;
+max-width:400px;
+}
+
+.person-big .title {
+    margin-bottom: 3em;
+    text-align: left;
+}
+
+.abstract{
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.authorlist{
+  margin: auto;
+  border-radius: 10px;
+}
+
+.author-smaller{
+  background-color: transparent;
+  display: revert;
+  width: revert;
+}
+
+.author-smaller .title{
+  text-align: left;
+}
+
+h4{
+font-size: 95%;
+}
+
+.author-smaller-inner{
+  padding:0;
+}
+
+.authorsection{
+
+}
+
+.abstractandauthors{
+  text-align: center;
+  margin: auto;
+  vertical-align: top;
+}
+
+.blankimg{
+}
+
+p{
+  font-size: 90%;
+  margin: 0;
+}
+
+.columns{
+  padding: 0;
+}
+
+
+</style>
+
+
+
 
 <div class="row     ">
   <div class="columns small-4   medium-4   "> 
+    <h6 class="text-center"><a href="/research/publications/{{ next_p.bibref }}"><i class="fa fa-long-arrow-left"></i> {{ next_text }} <i class="fa fa-file-text-o" aria-hidden="true"></i><br>{{ next_p.title }}</a></h6>
+  </div>
+  <div class="columns small-1   medium-1   "> &nbsp;</div>
+  <div class="columns small-2   medium-2   ">
+    <h6 class="text-center     "><a href="/research/publications/{{ rand.bibref }}">
+      Random paper <i class="fa fa-cube"></i></a></h6>
+  </div>
+  <div class="columns small-1   medium-1   "> &nbsp;</div>
 
-<h6 class="text-center"><a href="/research/publications/{{ next_p.bibref }}"><i class="fa fa-long-arrow-left"></i> {{ next_text }} <i class="fa fa-file-text-o" aria-hidden="true"></i><br>{{ next_p.title }}</a>
-</h6>
-
-</div>
-
-<div class="columns small-1   medium-1   "> &nbsp;</div>
-<div class="columns small-2   medium-2   "> 
-<h6 class="text-center     "><a href="/research/publications/{{ rand.bibref }}">
-    Random paper <i class="fa fa-cube"></i></a></h6>
-</div>
-<div class="columns small-1   medium-1   "> &nbsp;</div>
-
-<div class="columns small-4   medium-4   ">
-<h6 class="text-center     "><a href="/research/publications/{{ prev_p.bibref }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{ prev_text }} <i class="fa fa-long-arrow-right"></i><br>{{ prev_p.title }}</a>
-</h6>
-</div>
+  <div class="columns small-4   medium-4   ">
+    <h6 class="text-center     "><a href="/research/publications/{{ prev_p.bibref }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{ prev_text }} <i class="fa fa-long-arrow-right"></i><br>{{ prev_p.title }}</a></h6>
+  </div>
 </div>
 
 <br>
-<div class="person-big">
-  <div class="person-big-inner">		
-    <div class="img"><img src="{{ paper.image.url }}"/></div>
-    <div class="title"><h2><strong>{{ paper.title }}</strong></h2>
-    <p>{% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}<strong>{{ paper.volume }}</strong>, {{ paper.pages }}, {% endif %}{% endif %}{{ paper.year }}</p>
-    <p><strong>Abstract:</strong> {{ paper.HTMLabstract|safe }}</p>
-    <hr style="border-color: #222;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    border-width: .5px;
-    opacity: 1;">				
-    <p>Status: {{ paper.status }}</p>
-    <p>Citations: {{ paper.timescited }}</p>
-    <p>Cite: [<a href="/bibgen/{{ paper.bibref }}/" target="_blank">bibtex</a>]</p>
-    <hr style="border-color: #222;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    border-width: .5px;
-    opacity: 1;">
-    {% if arxivlink|length > 0 %}<p><a href="{{ paper.arxivlink }}" target="_blank">arXiv link</a></p>{% endif %}
-    {% if journalpagelink|length > 0 %}<p><a href="{{ paper.journalpagelink }}" target="_blank">Journal link</a></p>{% endif %}
-    {% if supplementarylink|length > 0 %}<p><a href="{{ paper.supplementarylink }}" target="_blank">Supplementary link</a></p>{% endif %}
-      </div> <!-- .title -->
-  </div> <!-- .article-big-inner -->
-</div> <!-- .article-big -->
-<br>
-<h5>Authors:</h5>
-<div class="authorlist">			
-  {% for person in paper.authors.all %}
-  <div class="author-smaller">
-    <div class="author-smaller-inner">		
-      <div class="img">
-        <a href="/people/core-team/{{ person.uname }}"><img src="{{ person.image.url }}" alt="Person image"/></a>
-      </div>      
-      <div class="title"><h4><a href="/people/core-team/{{ person.uname }}">{{ person.fullname }}</a></h4></div>
-      <div class="title">
-        {% if person.webpage|length > 0 %}
-        <a href="{{ person.webpage }}"><i class="fa fa-external-link fa-fw fa-lg"></i></a>
-        {% endif %}
-        {% if person.twitter|length > 0 %}
-        <a href="http://twitter.com/{{ person.twitter }}"><i class="fa fa-twitter fa-fw fa-lg"></i></a>
-        {% endif %}
-        {% if person.linkedin|length > 0 %}
-        <a href="http://www.linkedin.com/{{ person.linkedin }}"><i class="fa fa-linkedin fa-fw fa-lg"></i></a>
-        {% endif %}
+
+<hr style="border-color: #222;
+                            margin-top: 8px;
+                            margin-bottom: 40px;
+border-width: .5px;
+opacity: 0.1;
+margin-left: 50px;
+margin-right: 50px;">
+
+
+<div id='stacks_out_4_page0' class='stacks_out'>
+  <div id='stacks_in_4_page0' class='stacks_in com_joeworkman_stacks_foundation_2col_s3_stack'>
+    <div class='row     '>
+      <div class='columns small-12   medium-6    large-3   '>
+        <div id='stacks_out_7_page0' class='stacks_out'>
+          <div id='stacks_in_7_page0' class='stacks_in com_joeworkman_stacks_foundation_1col_s3_stack'>
+            <div class='row        '>
+              <div class='columns small-12   '>
+                <div id='stacks_out_11_page0' class='stacks_out'>
+                  <div id='stacks_in_11_page0' class='stacks_in text_stack'>
+                    <div class="title"><h2><strong>{{ paper.title }}</strong></h2>
+                      <div class="authorsection">
+                        <div class="authorlist">
+                              {% for person in paper.authors.all %}
+                              <div class="author-smaller">
+                                <div class="author-smaller-inner">
+                                  <div class="title"><h4><a href="/people/core-team/{{ person.uname }}">{{ person.fullname }}</a></h4></div>
+                                  <div class="title">
+                                    {% if person.webpage|length > 0 %}
+                                      <a href="{{ person.webpage }}"><i class="fa fa-external-link fa-fw fa-lg"></i></a>
+                                    {% endif %}
+                                    {% if person.twitter|length > 0 %}
+                                      <a href="http://twitter.com/{{ person.twitter }}"><i class="fa fa-twitter fa-fw fa-lg"></i></a>
+                                    {% endif %}
+                                    {% if person.linkedin|length > 0 %}
+                                      <a href="http://www.linkedin.com/{{ person.linkedin }}"><i class="fa fa-linkedin fa-fw fa-lg"></i></a>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                              </div>
+                              {% endfor %}
+                          </div>
+                        </div>
+                            <p>{% if paper.journal %}{{ paper.journal }}, {% if paper.journal|lower != "preprint"%}<strong>{{ paper.volume }}</strong>, {{ paper.pages }}, {% endif %}{% endif %}{{ paper.year }}</p>
+                            <hr style="border-color: #222;
+                            margin-top: 8px;
+                            margin-bottom: 8px;
+                            border-width: .5px;
+                            opacity: 1;">
+                            <p>Status: {{ paper.status }}</p>
+                            <p>Citations: {{ paper.timescited }}</p>
+                            <p>Cite: [<a href="/bibgen/{{ paper.bibref }}/" target="_blank">bibtex</a>]</p>
+                            <hr style="border-color: #222;
+                            margin-top: 8px;
+                            margin-bottom: 8px;
+                            border-width: .5px;
+                            opacity: 1;">
+                              <div class="links">
+                                {% if preprintlink|length > 0 %}<p><a href="{{ paper.preprintlink }}" target="_blank">PDF</a></p>{% endif %}
+                                {% if arxivlink|length > 0 %}<p><a href="{{ paper.arxivlink }}" target="_blank">arXiv link</a></p>{% endif %}
+                                {% if journalpagelink|length > 0 %}<p><a href="{{ paper.journalpagelink }}" target="_blank">Journal link</a></p>{% endif %}
+                                {% if supplementarylink|length > 0 %}<p><a href="{{ paper.supplementarylink }}" target="_blank">Supplementary link</a></p>{% endif %}
+                              </div>
+                          </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div> <!-- col -->
-  </div> <!-->
-  {% endfor %}
-</div> <!-- col -->    
+      <div class='columns small-12   medium-6    large-8   '>
+        <div id='stacks_out_9_page0' class='stacks_out'>
+          <div id='stacks_in_9_page0' class='stacks_in com_joeworkman_stacks_foundation_1col_s3_stack'>
+            <div class='row        '>
+              <div class='columns small-12   '>
+                <div id='stacks_out_13_page0' class='stacks_out'>
+                  <div id='stacks_in_13_page0' class='stacks_in text_stack'>
+                    <img class="" oncontextmenu="return false;" draggable="false"  src="{{ paper.image.url }}"  data-interchange='[{{ paper.image.url }},(default)]' alt="My Image"/>
+                                          <p class="abstract"><strong>Abstract:</strong> {{ paper.HTMLabstract|safe }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <br>
 {% if not paper.author_list_sorted %}
 <h5>**May not be in order</h5>

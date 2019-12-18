@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^research/publications/$', views.paperlist.as_view()),
     url(r'^research/publications/([A-Za-z0-9]+?)$', views.paper.as_view()),
     url(r'^research/publications/([A-Za-z0-9]+?)/$', views.paper.as_view()),
-    url(r'^press/$', views.presslist.as_view()),
+    url(r'^research/press/$', views.presslist.as_view()),
     url(r'^(.*)', views.rapidweaver.as_view()),
 )
 

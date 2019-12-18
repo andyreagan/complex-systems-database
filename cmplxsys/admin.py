@@ -60,11 +60,16 @@ class PersonAdmin(admin.ModelAdmin):
     # inlines = (OrderInline,PositionInline,)
     search_fields = ['fullname']
 
+class EventAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 admin.site.register(Person,PersonAdmin)
 admin.site.register(Paper,PaperAdmin)
 admin.site.register(Press,PressAdmin)
 admin.site.register(Funding,FundingAdmin)
 admin.site.register(Project,ProjectAdmin)
 admin.site.register(Course,CourseAdmin)
+admin.site.register(Event,EventAdmin)
 # admin.site.register(Order)
 # admin.site.register(Position)

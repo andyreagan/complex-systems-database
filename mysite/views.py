@@ -71,9 +71,9 @@ class people(View):
 
 class paperlist(View):
     def get(self, request):
-        # should sort automatically
-        most_recent_papers = Paper.objects.all()[:50]
-        return render(request, 'mysite/research/publications/index.html',{"papers": most_recent_papers})
+        most_recent_papers = Paper.objects.all()
+        authors = Person.objects.all()
+        return render(request, 'mysite/research/publications/index.html',{"papers": most_recent_papers, "authors":authors})
 
 class paper(View):
     def get(self, request, bibref):
@@ -98,5 +98,5 @@ class paper(View):
 class presslist(View):
     def get(self, request):
         # should sort automatically
-        most_recent_press = Press.objects.all()[:50]
-        return render(request, 'mysite/press/index.html',{"all_press": most_recent_press})
+        presslist = Press.objects.all()[:50]
+        return render(request, 'mysite/research/press/index.html',{"presslist": presslist})
