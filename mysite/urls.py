@@ -30,25 +30,50 @@ urlpatterns = patterns('',
     url(r'^(.*)', views.rapidweaver.as_view()),
 )
 
+def static_filetype(filetype, view='django.views.static.serve', **kwargs):
+    """
+    Helper function to return a URL pattern for serving files in debug mode.
+    from django.conf import settings
+    from django.conf.urls.static import static
+    urlpatterns = patterns('',
+        # ... the rest of your URLconf goes here ...
+    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    """
+    # No-op if not in debug mode or an non-local prefix
+    return patterns('',
+        url(r'^(?P<path>.*%s)$' % filetype, view, kwargs=kwargs),
+    )
+
 # # load the static files if in debug
-# from settings import DEBUG
-# if DEBUG:
-#     from django.conf.urls.static import static
-#     from django.conf import settings
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# # set the static first
-# from django.conf.urls.static import static
-# from django.conf import settings
-# from mysite import views
-# urlpatterns = static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+static('rw_common/', document_root='/users/c/m/cmplxsys/www-root/rw_common/')+patterns('',
-#     url(r'^', include('cmplxsys.urls',namespace='cmplxsys')),
-#     url(r'^admin/', include(admin.site.urls)),
-#     # url(r'^(.*)', include(admin.site.urls)),
-#     url(r'^(.*)', views.rapidweaver.as_view()),
-# )
-
-
+from settings import DEBUG
+if DEBUG:
+    from django.conf.urls.static import static
+    from django.views.static import serve
+    from django.conf import settings
+    urlpatterns = (
+        static(
+            settings.STATIC_URL,
+            document_root=settings.STATIC_ROOT
+        ) + static(
+            '/rw_common',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/rw_common'
+        ) + static(
+            '/index_files',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/index_files'
+        ) + static_filetype(
+	    'png',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/'
+        ) + static_filetype(
+            'jpg',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/'
+        ) + static_filetype(
+            'css',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/'
+        ) + static_filetype(
+            'js',
+            document_root='/users/c/m/cmplxsys/www-root/templatery/'
+        ) + urlpatterns
+    )
     
 
 
