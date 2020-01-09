@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime,timedelta
 from subprocess import call
-#from scholar import *
+# from scholar import *
 import re
 
 def rename_files_person(instance,filename):
@@ -250,19 +250,20 @@ class Paper(models.Model):
                 firstauthor = self.authors.all()[0].last.lower()
             self.bibref = firstauthor + str(self.year) + get_first_noun(self.title)
             super(Paper, self).save(*args, **kwargs)
-        querier = ScholarQuerier()
-        settings = ScholarSettings()
-        querier.apply_settings(settings)
-        if self.google_scholar_cluster_id:
-            query = ClusterScholarQuery(cluster=self.google_scholar_cluster_id)
-        else:
-            query = SearchScholarQuery()
-            if len(self.authors.all().order_by('order')) > 0:
-                query.set_author(self.authors.all().order_by('order')[0].fullname)
-            query.set_phrase(self.title)
-            # tell it to look only for title
-            # query.set_scope(True)
-            query.set_num_page_results(1)
+
+        # querier = ScholarQuerier()
+        # settings = ScholarSettings()
+        # querier.apply_settings(settings)
+        # if self.google_scholar_cluster_id:
+        #     query = ClusterScholarQuery(cluster=self.google_scholar_cluster_id)
+        # else:
+        #     query = SearchScholarQuery()
+        #     if len(self.authors.all().order_by('order')) > 0:
+        #         query.set_author(self.authors.all().order_by('order')[0].fullname)
+        #     query.set_phrase(self.title)
+        #     # tell it to look only for title
+        #     # query.set_scope(True)
+        #     query.set_num_page_results(1)
 
         # if self.google_scholar_most_recent_date < (datetime.now()-timedelta(days=1)):
         if False:
