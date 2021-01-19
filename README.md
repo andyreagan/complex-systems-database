@@ -310,26 +310,26 @@ tail: cannot open ‘/usr/lib/unit-user-cmplxsys/unit.log’ for reading: Permis
 Here's the .htaccess, and we still need to do this, one way or another.
 I was writing up a description but the comments here really say what it needs to do:
 
-# push rw_common, index_files directories into templatery
-RewriteRule ^rw_common/(.*)?$ /templatery/rw_common/$1 [QSA,NC,L]
-RewriteRule ^index_files/(.*)?$ /templatery/index_files/$1 [QSA,NC,L]
-# the next four route all js, css, jpg, png extensions
-# that have neither the templatery or static folder
-# into templatery
-RewriteCond %{REQUEST_URI}  !^/templatery/.*$
-RewriteCond %{REQUEST_URI}  !^/static/.*$
-RewriteRule ^(.*?.js)$ /templatery/$1 [QSA,NC,L]
-RewriteCond %{REQUEST_URI}  !^/templatery/.*$
-RewriteCond %{REQUEST_URI}  !^/static/.*$
-RewriteRule ^(.*?.css)$ /templatery/$1 [QSA,NC,L]
-RewriteCond %{REQUEST_URI}  !^/templatery/.*$
-RewriteCond %{REQUEST_URI}  !^/static/.*$
-RewriteRule ^(.*?.jpg)$ /templatery/$1 [QSA,NC,L]
-RewriteCond %{REQUEST_URI}  !^/templatery/.*$
-RewriteCond %{REQUEST_URI}  !^/static/.*$
-RewriteRule ^(.*?.png)$ /templatery/$1 [QSA,NC,L]
-# and this rule then pushes everything else through the Django site!
-RewriteRule "^([a-z_\-/0-9\ ]*)/?$" /db/wsgi.py/$1 [QSA,NC,L]
+    # push rw_common, index_files directories into templatery
+    RewriteRule ^rw_common/(.*)?$ /templatery/rw_common/$1 [QSA,NC,L]
+    RewriteRule ^index_files/(.*)?$ /templatery/index_files/$1 [QSA,NC,L]
+    # the next four route all js, css, jpg, png extensions
+    # that have neither the templatery or static folder
+    # into templatery
+    RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+    RewriteCond %{REQUEST_URI}  !^/static/.*$
+    RewriteRule ^(.*?.js)$ /templatery/$1 [QSA,NC,L]
+    RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+    RewriteCond %{REQUEST_URI}  !^/static/.*$
+    RewriteRule ^(.*?.css)$ /templatery/$1 [QSA,NC,L]
+    RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+    RewriteCond %{REQUEST_URI}  !^/static/.*$
+    RewriteRule ^(.*?.jpg)$ /templatery/$1 [QSA,NC,L]
+    RewriteCond %{REQUEST_URI}  !^/templatery/.*$
+    RewriteCond %{REQUEST_URI}  !^/static/.*$
+    RewriteRule ^(.*?.png)$ /templatery/$1 [QSA,NC,L]
+    # and this rule then pushes everything else through the Django site!
+    RewriteRule "^([a-z_\-/0-9\ ]*)/?$" /db/wsgi.py/$1 [QSA,NC,L]
 
 It's not so different than a "standard" deployment of a site where the dynamic part (django/flask/whatever) has to be exectued, and static files are served by the webserver itself. Here we have two static directories, static and templatery. This is how I typically deploy nginx for a website.
 
@@ -337,25 +337,25 @@ The only thing that's more complicated here are two rewrites of rw_common and in
 
 This is the error I see:
 
--bash-4.2$ silk-app app load vermontcomplexsystems.org
-Adding new application vermontcomplexsystems.org/
-Traceback (most recent call last):
-  File "/usr/local/bin/silk-app", line 165, in app_load
-    unit.save_application(new_app)
-  File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/nginx_unit.py", line 339, in save_application
-    self._put_json(app.uri, app.to_json())
-  File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/nginx_unit.py", line 234, in _put_json
-    r.raise_for_status()
-  File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/requests/models.py", line 940, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 500 Server Error: Internal Server Error for url: http+unix://%2Frun%2Funit-user-cmplxsys%2Fcontrol.sock/config/applications/vermontcomplexsystems_org
-During handling of the above exception, another exception occurred:
-Traceback (most recent call last):
-  File "/usr/local/bin/silk-app", line 214, in <module>
-    app_handlers["{0} {1}".format(arguments['<command>'], subcmd)](arguments)
-  File "/usr/local/bin/silk-app", line 168, in app_load
-    print("{error} {detail}".format(error=err_json['error'], detail=err_json['detail']))
-KeyError: 'detail'
+    -bash-4.2$ silk-app app load vermontcomplexsystems.org
+    Adding new application vermontcomplexsystems.org/
+    Traceback (most recent call last):
+      File "/usr/local/bin/silk-app", line 165, in app_load
+        unit.save_application(new_app)
+      File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/nginx_unit.py", line 339, in save_application
+        self._put_json(app.uri, app.to_json())
+      File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/nginx_unit.py", line 234, in _put_json
+        r.raise_for_status()
+      File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/requests/models.py", line 940, in raise_for_status
+        raise HTTPError(http_error_msg, response=self)
+    requests.exceptions.HTTPError: 500 Server Error: Internal Server Error for url: http+unix://%2Frun%2Funit-user-cmplxsys%2Fcontrol.sock/config/applications/vermontcomplexsystems_org
+    During handling of the above exception, another exception occurred:
+    Traceback (most recent call last):
+      File "/usr/local/bin/silk-app", line 214, in <module>
+        app_handlers["{0} {1}".format(arguments['<command>'], subcmd)](arguments)
+      File "/usr/local/bin/silk-app", line 168, in app_load
+        print("{error} {detail}".format(error=err_json['error'], detail=err_json['detail']))
+    KeyError: 'detail'
 
 Is there more traceback for the error you posted? Perhaps you could chown the log file so I can see it.
 
@@ -424,29 +424,29 @@ That's just for python in general: https://unit.nginx.org/configuration/#configu
 
 I couldn't get it to escape a complex password appropriately:
 
--bash-4.2$ silk-app app load vermontcomplexsystems.org
-Traceback (most recent call last):
-  File "/usr/local/bin/silk-app", line 214, in <module>
-    app_handlers["{0} {1}".format(arguments['<command>'], subcmd)](arguments)
-  File "/usr/local/bin/silk-app", line 139, in app_load
-    site_config = config_for_site(app_url.netloc)
-  File "/usr/local/bin/silk-app", line 62, in config_for_site
-    config = SiteConfig(username=arguments['--user'], hostname=host, site_root=site_root)
-  File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/site_config.py", line 38, in __init__
-    self.load_preferences()
-  File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/site_config.py", line 53, in load_preferences
-    config[s] = dict(config.items(s))
-  File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 855, in items
-    return [(option, value_getter(option)) for option in d.keys()]
-  File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 855, in <listcomp>
-    return [(option, value_getter(option)) for option in d.keys()]
-  File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 852, in <lambda>
-    section, option, d[option], d)
-  File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 393, in before_get
-    self._interpolate_some(parser, option, L, value, section, defaults, 1)
-  File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 443, in _interpolate_some
-    "found: %r" % (rest,))
-configparser.InterpolationSyntaxError: '%' must be followed by '%' or '(', found: "%3v27\\!\\)_cfml*uffm3n9glfdy\\%16\\!\\#4wm5@8t\\)rc@do_z^'"
+    -bash-4.2$ silk-app app load vermontcomplexsystems.org
+    Traceback (most recent call last):
+      File "/usr/local/bin/silk-app", line 214, in <module>
+        app_handlers["{0} {1}".format(arguments['<command>'], subcmd)](arguments)
+      File "/usr/local/bin/silk-app", line 139, in app_load
+        site_config = config_for_site(app_url.netloc)
+      File "/usr/local/bin/silk-app", line 62, in config_for_site
+        config = SiteConfig(username=arguments['--user'], hostname=host, site_root=site_root)
+      File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/site_config.py", line 38, in __init__
+        self.load_preferences()
+      File "/opt/rh/rh-python35/root/usr/lib/python3.5/site-packages/uvmsilk/site_config.py", line 53, in load_preferences
+        config[s] = dict(config.items(s))
+      File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 855, in items
+        return [(option, value_getter(option)) for option in d.keys()]
+      File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 855, in <listcomp>
+        return [(option, value_getter(option)) for option in d.keys()]
+      File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 852, in <lambda>
+        section, option, d[option], d)
+      File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 393, in before_get
+        self._interpolate_some(parser, option, L, value, section, defaults, 1)
+      File "/opt/rh/rh-python35/root/usr/lib64/python3.5/configparser.py", line 443, in _interpolate_some
+        "found: %r" % (rest,))
+    configparser.InterpolationSyntaxError: '%' must be followed by '%' or '(', found: "%3v27\\!\\)_cfml*uffm3n9glfdy\\%16\\!\\#4wm5@8t\\)rc@do_z^'"
 
 I tried single, double quotes, backslash escape...
 I just made the password simpler.
