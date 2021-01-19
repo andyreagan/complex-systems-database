@@ -149,3 +149,8 @@ i.e., in `.../core-team/index.html` and all of the other folders
 
 I had converted a number of inner templates to use CSS layout rather than HTML tables, but the list pages still use tables. The individual person page doesn’t. I need to do the CSS for the list pages.
 
+## Events model
+
+From various emails, Kelly G tried to add a database model for events but got an error making the migration.
+Based on this,
+I'm not sure what the current state of the site is.
