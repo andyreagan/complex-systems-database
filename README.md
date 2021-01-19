@@ -276,6 +276,7 @@ Will .htaccess files still work?
 If we need to use nginx, I could write the equivalent nginx rules...
 I'm not sure how else we'll manage routing the specific files types through templatery.
 
+---
 
 > The NGINX Unit app server assumes a more standard app directory layout than you are currently using, and thus I copied your wsgi.py into db/complex-systems-database/, made it executable, and symlinked to the static/ directory from inside that same directory.  I added the following to your .silk.ini:
 >
@@ -300,6 +301,7 @@ I'm not sure how else we'll manage routing the specific files types through temp
 >
 > Is there a particular reason you have things split across multiple directories?  As things stand currently, the .htaccess probably would not work.
 
+---
 I can't see the log file:
 
 -bash-4.2$ tail /usr/lib/unit-user-cmplxsys/unit.log
